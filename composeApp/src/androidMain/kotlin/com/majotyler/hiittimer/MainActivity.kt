@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutScreen
+import com.majotyler.hiittimer.presentation.TimerScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            PlayWorkoutScreen(
+            TimerScreen(
                 viewModel = viewModel(),
             )
         }
