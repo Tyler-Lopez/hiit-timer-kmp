@@ -1,29 +1,57 @@
 package com.majotyler.hiittimer.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class TimerViewModel : ViewModel() {
-    private val _state = MutableStateFlow(value = TimerViewState(seconds = 0))
-    val state = _state.asStateFlow()
 
+    private val _loading = MutableStateFlow(false)
+    val loading = _loading.asStateFlow()
     fun onEvent(event: TimerViewEvent) {
         when (event) {
-            is TimerViewEvent.ClickedStartTimer -> onClickedStartTimer()
-            is TimerViewEvent.ClickedStopTimer -> onClickedStopTimer()
+            is TimerViewEvent.ClickAdd -> {
+                viewModelScope.launch {
+                    ClickAdd()
+                }
+            }
         }
     }
 
-    private fun onClickedStartTimer() {
-        /** TODO (Tyler):
-         * Start incrementing the seconds of the [_state].
-         */
-    }
+    suspend fun ClickAdd() {
+        _loading.value = true
+        delay(4000)
+        _loading.value = false
 
-    private fun onClickedStopTimer() {
-        /** TODO (Tyler):
-         * Stop incrementing the seconds of the [_state].
-         */
+
     }
 }
+
+//  private val _state = MutableStateFlow(value = TimerViewState(seconds = 0))
+//val state = _state.asStateFlow()
+
+
+//fun onEvent(event: TimerViewEvent) {
+//  when (event) {
+//    is TimerViewEvent.ClickedStartTimer -> onClickedStartTimer()
+//  is TimerViewEvent.ClickedStopTimer -> onClickedStopTimer()
+//}
+//}
+
+//private fun onClickedStartTimer() {
+//  /** TODO (Tyler):
+// * Start incrementing the seconds of the [_state].
+//*/
+//}
+
+//private fun onClickedStopTimer() {
+//  /** TODO (Tyler):
+// * Stop incrementing the seconds of the [_state].
+//*/
+//}
+
+
+    
