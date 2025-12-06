@@ -11,14 +11,21 @@ class TimerViewModel : ViewModel() {
 
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
+
+    private val _exercises = MutableStateFlow(listOf("Lagartijas","gallitos", "dominadas"," sentadillas"))
+    val exercises = _exercises.asStateFlow()
+
     fun onEvent(event: TimerViewEvent) {
         when (event) {
             is TimerViewEvent.ClickAdd -> {
                 viewModelScope.launch {
                     ClickAdd()
+                }}
+            is TimerViewEvent.onDelete -> {
+                onDelete(event.item)
                 }
-            }
-        }
+
+    }
     }
 
     suspend fun ClickAdd() {
@@ -28,6 +35,11 @@ class TimerViewModel : ViewModel() {
 
 
     }
+    fun onDelete(item: String){
+        _exercises.value = _exercises.value.filter { it != item }
+    }
+
+
 }
 
 //  private val _state = MutableStateFlow(value = TimerViewState(seconds = 0))
