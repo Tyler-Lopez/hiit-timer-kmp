@@ -1,4 +1,4 @@
-package com.majotyler.hiittimer.presentation.common
+package com.majotyler.hiittimer.presentation.common.compose
 
 import androidx.compose.runtime.Composable
 
