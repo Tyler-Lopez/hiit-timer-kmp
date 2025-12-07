@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.majotyler.hiittimer.presentation.common.RowClickable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -95,43 +96,13 @@ fun Workouts(list: List<String>, onDelete: (String) -> Unit) {
             )
         }
         itemsIndexed(list) {index, item ->
-            ItemList(index,item, onDelete)
-
-        }
-    }
-}
-
-@Composable
-fun ItemList(index: Int, item: String, onDelete: (String) -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(
-                text = "${index + 1}. ${item}",
-                fontSize = 20.sp,
-                modifier = Modifier.weight(1f)
+            RowClickable(
+                entryNo = index + 1,
+                text = item,
+                onClickedRow = null,
+                onClickedRemove = { onDelete(item) }
             )
-
-            IconButton(
-                onClick = { onDelete(item) },
-                modifier = Modifier
-                    .size(28.dp)
-                    .background(Color.Black).padding(5.dp)
-            ) {
-                Text(
-                    text = "X",
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
-            }
         }
-
-        Divider(color = Color.LightGray, thickness = 1.dp)
     }
 }
 
