@@ -2,21 +2,22 @@ package com.majotyler.hiittimer.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,6 +45,7 @@ fun TimerScreenPreview() {
 fun TimerScreen(viewModel: TimerViewModel) {
     val loading by viewModel.loading.collectAsStateWithLifecycle()
     val list by viewModel.exercises.collectAsStateWithLifecycle()
+    val reps by viewModel.reps.collectAsStateWithLifecycle()
 
     if (loading) {
         Box(Modifier.fillMaxSize()) {
@@ -53,11 +55,24 @@ fun TimerScreen(viewModel: TimerViewModel) {
         Box(
             modifier = Modifier.fillMaxSize().background(color = Color(0xFFFFFFFF)).padding(16.dp)
         ) {
-            Column(Modifier.align(Alignment.TopStart)) {
-                Workouts(list){ item -> viewModel.onDelete(item) }
-                AddButton {
-                    viewModel.onEvent(TimerViewEvent.ClickAdd)
+            Column(Modifier.align(Alignment.TopStart).fillMaxWidth().padding(top = 32.dp)) {
+                Row() {
+                    Workouts(list) { index -> viewModel.onClickedDelete(index) }
+                    Spacer(Modifier.weight(1f))
+                    RepsButton(
+                            reps,
+                        { viewModel.onEvent(TimerViewEvent.AddReps) },
+                         { viewModel.onEvent(TimerViewEvent.RemoveReps) }
+                    )
+
                 }
+                AddButton {
+                    viewModel.onEvent(TimerViewEvent.ClickedAdd)
+                }
+                Spacer(Modifier.height(90.dp))
+                IntervalsList()
+                Spacer(Modifier.height(22.dp))
+                StartButton()
 
             }
 
@@ -68,11 +83,51 @@ fun TimerScreen(viewModel: TimerViewModel) {
 }
 
 @Composable
+fun StartButton() {
+    Button(modifier=Modifier.fillMaxWidth().height(50.dp), onClick = {}){
+        Text("Go", fontSize = 30.sp)
+    }
+}
+
+@Composable
+fun IntervalsList() {
+    val list= listOf("a","ejercicio","otro")
+    LazyColumn (Modifier.fillMaxWidth().height(260.dp)){
+        itemsIndexed(list){
+            index,item ->
+            RowClickable(
+                entryNo = index + 1,
+                text = item,
+                onClickedRow = null,
+                onClickedRemove = {}
+            )
+        }
+    }
+}
+
+@Composable
+fun RepsButton(reps: Int,addReps: () -> Unit,removeReps:() ->Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center){
+
+    Box(Modifier.height(43.dp).width(100.dp).background(MaterialTheme.colorScheme.primary),contentAlignment = Alignment.Center){
+        Text("Reps", color = Color.White)
+    }
+        Spacer(Modifier.height(20.dp))
+        Text("+", Modifier.clickable{addReps()},fontSize = 40.sp, color = MaterialTheme.colorScheme.primary )
+        Text("$reps", fontSize = 40.sp,color= MaterialTheme.colorScheme.primary)
+        Text("-",Modifier.clickable{removeReps()}, fontSize = 50.sp,color=MaterialTheme.colorScheme.primary)
+
+    }
+
+}
+
+@Composable
 fun AddButton(clickAdd: () -> Unit) {
     Box(
         Modifier.height(50.dp).width(200.dp)
             .clip(RoundedCornerShape(size = 12.dp))
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.primary)
             .clickable { clickAdd() },
         contentAlignment = Alignment.Center
     )
@@ -83,7 +138,7 @@ fun AddButton(clickAdd: () -> Unit) {
 }
 
 @Composable
-fun Workouts(list: List<String>, onDelete: (String) -> Unit) {
+fun Workouts(list: List<String>, onDelete: (Int) -> Unit) {
 
     LazyColumn(modifier = Modifier.height(300.dp).width(200.dp)) {
         stickyHeader {
@@ -91,7 +146,7 @@ fun Workouts(list: List<String>, onDelete: (String) -> Unit) {
                 text = "Workouts", color = Color.White,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.Black)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(16.dp),
             )
         }
@@ -100,7 +155,7 @@ fun Workouts(list: List<String>, onDelete: (String) -> Unit) {
                 entryNo = index + 1,
                 text = item,
                 onClickedRow = null,
-                onClickedRemove = { onDelete(item) }
+                onClickedRemove = { onDelete(index) }
             )
         }
     }
