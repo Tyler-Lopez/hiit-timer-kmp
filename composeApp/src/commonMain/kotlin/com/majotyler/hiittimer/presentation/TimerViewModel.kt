@@ -12,33 +12,57 @@ class TimerViewModel : ViewModel() {
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
-    private val _exercises = MutableStateFlow(listOf("Lagartijas","gallitos", "dominadas"," sentadillas"))
+    private val _exercises =
+        MutableStateFlow(listOf("Lagartijas", "gallitos", "dominadas", " sentadillas"))
     val exercises = _exercises.asStateFlow()
+
+    private val _reps = MutableStateFlow(0)
+    val reps = _reps.asStateFlow()
 
     fun onEvent(event: TimerViewEvent) {
         when (event) {
-            is TimerViewEvent.ClickAdd -> {
+            is TimerViewEvent.ClickedAdd -> {
                 viewModelScope.launch {
-                    ClickAdd()
-                }}
-            is TimerViewEvent.onDelete -> {
-                onDelete(event.item)
+                    onClickedAdd()
                 }
+            }
 
-    }
+            is TimerViewEvent.ClickedDelete -> {
+                onClickedDelete(event.index)
+            }
+
+            is TimerViewEvent.AddReps -> {
+                addReps()
+            }
+
+            is TimerViewEvent.RemoveReps -> {
+                removeReps()
+            }
+
+        }
     }
 
-    suspend fun ClickAdd() {
+    suspend fun onClickedAdd() {
         _loading.value = true
         delay(4000)
         _loading.value = false
 
 
     }
-    fun onDelete(item: String){
-        _exercises.value = _exercises.value.filter { it != item }
+
+    fun onClickedDelete(index: Int) {
+        _exercises.value = _exercises.value.toMutableList().apply {
+            removeAt(index)
+        }
     }
 
+    fun addReps() {
+        _reps.value++
+    }
+
+    fun removeReps() {
+        if (_reps.value >0) _reps.value--
+    }
 
 }
 
