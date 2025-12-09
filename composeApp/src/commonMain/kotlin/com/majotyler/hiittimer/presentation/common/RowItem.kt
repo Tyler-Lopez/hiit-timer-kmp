@@ -2,20 +2,18 @@ package com.majotyler.hiittimer.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,13 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun RowClickable(
+fun RowItem(
     entryNo: Int,
     text: String,
     onClickedRemove: () -> Unit,
@@ -55,6 +55,16 @@ fun RowClickable(
                         this
                     }
                 }
+                .dragAndDropTarget(
+                    shouldStartDragAndDrop = { event ->
+                        true
+                    },
+                    target = remember { object : DragAndDropTarget {
+                        override fun onDrop(event: DragAndDropEvent): Boolean {
+                            TODO("Not yet implemented")
+                        }
+                    } }
+                )
                 .padding(start = 16.dp, end = 0.dp)
                 .padding(vertical = 4.dp)
                 .defaultMinSize(
@@ -103,7 +113,7 @@ fun RowClickable(
 @Composable
 private fun RowClickable_Preview() {
     MaterialTheme {
-        RowClickable(
+        RowItem(
             entryNo = 1,
             text = "Example text",
             onClickedRow = {},
