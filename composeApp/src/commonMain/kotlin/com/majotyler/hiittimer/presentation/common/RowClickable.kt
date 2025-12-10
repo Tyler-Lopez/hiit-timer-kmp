@@ -37,6 +37,7 @@ fun RowClickable(
     text: String,
     onClickedRemove: () -> Unit,
     onClickedRow: (() -> Unit)? = null,
+    showDivider: Boolean = true,
 ) {
     Column {
         Row(
@@ -68,7 +69,7 @@ fun RowClickable(
                     .padding(all = 4.dp)
             ) {
                 Text(
-                    color = MaterialTheme.colorScheme.tertiary,
+                    color = MaterialTheme.colorScheme.secondary,
                     text = "$entryNo",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Black,
@@ -92,10 +93,13 @@ fun RowClickable(
                 )
             }
         }
-        HorizontalDivider(
-            modifier = Modifier
-                .padding(start = 16.dp),
-        )
+
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier
+                    .padding(start = 16.dp),
+            )
+        }
     }
 }
 

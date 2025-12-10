@@ -42,25 +42,23 @@ class TimerViewModel : ViewModel() {
         }
     }
 
-    suspend fun onClickedAdd() {
+    private suspend fun onClickedAdd() {
         _loading.value = true
         delay(4000)
         _loading.value = false
-
-
     }
 
-    fun onClickedDelete(index: Int) {
+    private fun onClickedDelete(index: Int) {
         _exercises.value = _exercises.value.toMutableList().apply {
             removeAt(index)
         }
     }
 
-    fun addReps() {
+    private fun addReps() {
         _reps.value++
     }
 
-    fun removeReps() {
+    private fun removeReps() {
         if (_reps.value >0) _reps.value--
     }
 
