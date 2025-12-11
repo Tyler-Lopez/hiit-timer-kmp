@@ -1,40 +1,22 @@
 package com.majotyler.hiittimer.presentation.common
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -72,65 +54,55 @@ fun TableCard(
 
     val density = LocalDensity.current
 
-    Card(
-        elevation = CardDefaults.elevatedCardElevation(),
+    SubcomposeLayout(
         modifier = modifier,
-    ) {
-        SubcomposeLayout { constraints ->
-            val headerMeasurables = subcompose("header", { header(Modifier) })
-            val headerPlaceables = headerMeasurables.map { it.measure(constraints) }
-            val contentMeasurables = subcompose("content", content)
-            val contentPlaceables = contentMeasurables.map { it.measure(constraints) }
+    ) { constraints ->
+        val headerMeasurables = subcompose("header", { header(Modifier) })
+        val headerPlaceables = headerMeasurables.map { it.measure(constraints) }
+        val contentMeasurables = subcompose("content", content)
+        val contentPlaceables = contentMeasurables.map { it.measure(constraints) }
 
-            val contentHeight = contentPlaceables.sumOf { it.height }
-            val contentWidth = contentPlaceables.sumOf { it.width }
+        val contentHeight = contentPlaceables.sumOf { it.height }
+        val contentWidth = contentPlaceables.sumOf { it.width }
 
-            val headerHeight = headerPlaceables.sumOf { it.height }
-            val headerWidth = headerPlaceables.sumOf { it.width }
+        val headerHeight = headerPlaceables.sumOf { it.height }
+        val headerWidth = headerPlaceables.sumOf { it.width }
 
-            val width = minOf(
-                a = maxOf(contentWidth, headerWidth),
-                b = constraints.maxWidth,
-            )
-            val widthDp = density.run { width.toDp() }
+        val widthPx: Int = maxOf(contentWidth, headerWidth, constraints.minWidth)
+        val widthDp = density.run { widthPx.toDp() }
 
-            val contentAdj: @Composable () -> Unit = {
+        val contentWithHeader: @Composable () -> Unit = {
+            Card(
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
+                modifier = Modifier
+                    .width(width = widthDp),
+            ) {
+                header(Modifier.fillMaxWidth())
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .width(width = widthDp)
-                        .background(color = MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
                 ) {
                     content()
                 }
             }
+        }
 
-            val contentAdjPlaceables = subcompose("contentAdj", contentAdj)
-                .map { it.measure(constraints) }
+        val contentWithHeaderPlaceables = subcompose(
+            "contentWithHeaderPlaceables",
+            contentWithHeader,
+        ).map { it.measure(constraints) }
 
-
-
-            val headerAdj: @Composable () -> Unit = {
-                header(Modifier.width(width = widthDp))
-            }
-
-            val headerAdjPlaceables = subcompose("headerAdj", headerAdj)
-                .map { it.measure(constraints) }
-
-            layout(
-                width = width,
-                height = minOf(
-                    a = contentHeight + headerHeight,
-                    b = constraints.maxHeight,
-                ),
-            ) {
-                headerAdjPlaceables.forEach {
-                    it.place(x = 0, y = 0)
-                }
-                contentAdjPlaceables.forEach {
-                    it.place(x = 0, y = headerHeight)
-                }
-            }
+        layout(
+            width = widthPx,
+            height = minOf(
+                a = contentHeight + headerHeight,
+                b = constraints.maxHeight,
+            ),
+        ) {
+            contentWithHeaderPlaceables.forEach { it.place(x = 0, y = 0) }
         }
     }
 }
@@ -162,6 +134,7 @@ private fun TableCard_Preview() {
 private fun TableCard_Row_Preview() {
     MaterialTheme {
         Row(
+            horizontalArrangement = Arrangement.spacedBy(space = 4.dp),
             modifier = Modifier
                 .fillMaxSize(),
         ) {
@@ -211,7 +184,7 @@ private fun TableCard_Row_Slim_Content_Preview() {
                 modifier = Modifier.weight(weight = 1F),
                 content = {
                     LazyColumn {
-                        items(20) {
+                        items(40) {
                             RowClickable(
                                 entryNo = it,
                                 text = it.toString(),
@@ -219,7 +192,152 @@ private fun TableCard_Row_Slim_Content_Preview() {
                                 onClickedRemove = {},
                             )
                         }
+                        item {
+                            RowClickable(
+                                entryNo = 100,
+                                text = "Last item",
+                                onClickedRow = {},
+                                onClickedRemove = {},
+                            )
+                        }
                     }
+                },
+            )
+            TableCard(
+                header = "Test",
+                content = {
+                    Text("0")
+                },
+            )
+        }
+    }
+}
+
+
+@Preview
+@Composable
+private fun TableCard_Row_Slim_Content_To_End_Preview() {
+    MaterialTheme {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            TableCard(
+                header = "Test",
+                content = {
+                    Text("0")
+                },
+            )
+
+            TableCard(
+                header = "Workouts",
+                modifier = Modifier.weight(weight = 1F),
+                content = {
+                    LazyColumn {
+                        items(40) {
+                            RowClickable(
+                                entryNo = it,
+                                text = it.toString(),
+                                onClickedRow = {},
+                                onClickedRemove = {},
+                            )
+                        }
+                        item {
+                            RowClickable(
+                                entryNo = 100,
+                                text = "Last item",
+                                onClickedRow = {},
+                                onClickedRemove = {},
+                            )
+                        }
+                    }
+                },
+            )
+        }
+    }
+}
+
+
+@Preview
+@Composable
+private fun TableCard_Row_Hard_Coded_Preview() {
+    MaterialTheme {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            TableCard(
+                header = "Test",
+                content = {
+                    Text("0")
+                },
+            )
+
+            TableCard(
+                header = "Workouts",
+                modifier = Modifier.width(40.dp),
+                content = {
+                    LazyColumn {
+                        items(40) {
+                            RowClickable(
+                                entryNo = it,
+                                text = it.toString(),
+                                onClickedRow = {},
+                                onClickedRemove = {},
+                            )
+                        }
+                        item {
+                            RowClickable(
+                                entryNo = 100,
+                                text = "Last item",
+                                onClickedRow = {},
+                                onClickedRemove = {},
+                            )
+                        }
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TableCard_Row_Slim_Content_Missing_First_Preview() {
+    MaterialTheme {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            TableCard(
+                header = "Workouts",
+                modifier = Modifier.weight(weight = 1F),
+                content = {
+                },
+            )
+            TableCard(
+                header = "Test",
+                content = {
+                    Text("0")
+                },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TableCard_Row_Slim_Content_Both_Preview() {
+    MaterialTheme {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            TableCard(
+                header = "Workouts",
+                modifier = Modifier.weight(weight = 1F),
+                content = {
+                    Text("0")
                 },
             )
             TableCard(
