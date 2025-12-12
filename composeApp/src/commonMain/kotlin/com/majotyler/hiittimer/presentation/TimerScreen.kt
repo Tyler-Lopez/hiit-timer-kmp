@@ -41,7 +41,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview(showBackground = true)
 @Composable
 fun TimerScreenPreview() {
-    val viewModel = TimerViewModel()
+    val viewModel = TimerViewModel(
+        router = {},
+    )
 
     TimerScreen(viewModel = viewModel)
 }

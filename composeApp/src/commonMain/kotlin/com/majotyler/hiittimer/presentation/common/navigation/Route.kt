@@ -12,6 +12,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface Route : NavKey {
     @Serializable
+    data object AddWorkout : Route
+
+    @Serializable
     data object Home : Route
 
     @Serializable

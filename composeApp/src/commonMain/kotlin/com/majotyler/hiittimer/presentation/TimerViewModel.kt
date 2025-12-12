@@ -2,6 +2,8 @@ package com.majotyler.hiittimer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.majotyler.hiittimer.presentation.common.navigation.Router
+import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +14,9 @@ data class Interval(
     val reps: Int
 )
 
-class TimerViewModel : ViewModel() {
+class TimerViewModel(
+    private val router: Router<TimerDestination>,
+) : ViewModel() {
 
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
@@ -48,16 +52,13 @@ class TimerViewModel : ViewModel() {
             is TimerViewEvent.RemoveReps -> removeReps()
             is TimerViewEvent.AddIntervals -> addIntervals()
             is TimerViewEvent.DeleteIntervals -> deleteIntervals(event.index)
-
-
         }
     }
 
     private fun onClickedAdd() {
         val list = listOf("1", "2", "4", "5")
         _exercises.value = list
-
-
+        router.routeTo(destination = TimerDestination.NavigateToAddWorkout)
     }
 
     private fun onClickedDelete(index: Int) {
