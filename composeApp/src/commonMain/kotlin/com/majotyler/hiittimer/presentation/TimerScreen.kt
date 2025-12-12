@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,50 +62,60 @@ fun TimerScreen(viewModel: TimerViewModel) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
     } else {
-        Box(
-            modifier = Modifier.fillMaxSize().background(color = Color(0xFFFFFFFF)).padding(16.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .safeContentPadding()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 4.dp),
         ) {
-            Column(Modifier.align(Alignment.TopStart).fillMaxWidth().padding(top = 32.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
-                ) {
-                    Workouts(
-                        list = list,
-                        modifier = Modifier
-                            .weight(weight = 3F).fillMaxHeight(),
-                        onClickedAdd = { viewModel.onEvent(event = TimerViewEvent.ClickedAdd) },
-                        onDelete = {
-                            viewModel.onEvent(event = TimerViewEvent.ClickedDelete(index = it))
-                        },
-                    )
-
-                    RepsButton(
-                        reps = reps,
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                        addReps = { viewModel.onEvent(TimerViewEvent.AddReps) },
-                        removeReps = { viewModel.onEvent(TimerViewEvent.RemoveReps) },
-                        enable = enable,
-                        addIntervals = {
-                            viewModel.onEvent(
-                                TimerViewEvent.AddIntervals
-                            )
-                        }
-                    )
-
-                }
-                Spacer(Modifier.height(20.dp))
-                IntervalsList(intervals) { viewModel.onEvent(TimerViewEvent.DeleteIntervals(index = it)) }
-                Spacer(Modifier.height(22.dp))
-                StartButton()
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(weight = 1F),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
+            ) {
+                Workouts(
+                    list = list,
+                    modifier = Modifier
+                        .weight(weight = 1F).fillMaxHeight(),
+                    onClickedAdd = { viewModel.onEvent(event = TimerViewEvent.ClickedAdd) },
+                    onDelete = {
+                        viewModel.onEvent(event = TimerViewEvent.ClickedDelete(index = it))
+                    },
+                )
+                RepsButton(
+                    reps = reps,
+                    modifier = Modifier.fillMaxHeight(),
+                    addReps = { viewModel.onEvent(TimerViewEvent.AddReps) },
+                    removeReps = { viewModel.onEvent(TimerViewEvent.RemoveReps) },
+                )
             }
+            Button(
+                shape = RoundedCornerShape(size = 12.dp),
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    viewModel.onEvent(
+                        TimerViewEvent.AddIntervals
+                    )
+                },
+                enabled = enable
+            ) {
+                Text(
+                    fontWeight = FontWeight.SemiBold,
+                    text = "Add Interval",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+            IntervalsList(
+                intervals = intervals,
+                modifier = Modifier.weight(weight = 1F),
+            ) { viewModel.onEvent(TimerViewEvent.DeleteIntervals(index = it)) }
+            StartButton()
 
         }
     }
-
-
 }
 
 @Composable
@@ -114,21 +126,27 @@ fun StartButton() {
 }
 
 @Composable
-fun IntervalsList(intervals: List<Interval>, deleteInterval: (Int) -> Unit) {
-    TableCard(header = "Intervals", content = {
-        LazyColumn(Modifier.fillMaxWidth().fillMaxHeight(0.65f)) {
-            itemsIndexed(intervals) { index, item ->
-                RowWithContent(
-                    entryNo = index + 1,
-                    header = "${item.reps} Repeticiones",
-                    lines = item.exercises,
-                    onClickedRemove = { deleteInterval(index) }
-                )
+fun IntervalsList(
+    intervals: List<Interval>,
+    modifier: Modifier = Modifier,
+    deleteInterval: (Int) -> Unit,
+) {
+    TableCard(
+        header = "Intervals",
+        modifier = modifier,
+        content = {
+            LazyColumn(Modifier.fillMaxWidth()) {
+                itemsIndexed(intervals) { index, item ->
+                    RowWithContent(
+                        entryNo = index + 1,
+                        header = "${item.reps} Repeticiones",
+                        lines = item.exercises,
+                        onClickedRemove = { deleteInterval(index) }
+                    )
+                }
             }
         }
-    }
     )
-
 }
 
 @Composable
@@ -137,8 +155,6 @@ fun RepsButton(
     addReps: () -> Unit,
     removeReps: () -> Unit,
     modifier: Modifier,
-    addIntervals: () -> Unit,
-    enable: Boolean
 ) {
     Column(modifier = modifier) {
         TableCard(
@@ -176,29 +192,9 @@ fun RepsButton(
                 }
             }
         )
-        Spacer(Modifier.weight(1f))
-        AddButton(addIntervals, "Add", enable = enable)
     }
 }
 
-
-@Composable
-private fun AddButton(
-    clickAdd: () -> Unit, text: String, enable: Boolean
-) {
-    Button(
-        shape = RoundedCornerShape(size = 12.dp),
-        modifier = Modifier.fillMaxWidth(),
-        onClick = clickAdd,
-        enabled = enable
-    ) {
-        Text(
-            fontWeight = FontWeight.SemiBold,
-            text = text,
-            style = MaterialTheme.typography.titleLarge,
-        )
-    }
-}
 
 @Composable
 fun Workouts(
@@ -209,32 +205,45 @@ fun Workouts(
 ) {
     Column(
         modifier = modifier,
-
-        ) {
+    ) {
         TableCard(
             header = "Workouts",
+            modifier = Modifier.fillMaxHeight(),
             content = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth().fillMaxHeight(0.7f)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    itemsIndexed(list) { index, item ->
-                        RowClickable(
-                            entryNo = index + 1,
-                            text = item,
-                            onClickedRow = null,
-                            onClickedRemove = { onDelete(index) },
-                            showDivider = index != list.lastIndex,
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth().weight(1F),
+                    ) {
+                        itemsIndexed(list) { index, item ->
+                            RowClickable(
+                                entryNo = index + 1,
+                                text = item,
+                                onClickedRow = null,
+                                onClickedRemove = { onDelete(index) },
+                                showDivider = index != list.lastIndex,
+                            )
+                        }
+                    }
+                    HorizontalDivider()
+                    Button(
+                        modifier = Modifier
+                            .padding(vertical = 4.dp),
+                        shape = RoundedCornerShape(size = 12.dp),
+                        onClick = onClickedAdd,
+                    ) {
+                        Text(
+                            fontWeight = FontWeight.SemiBold,
+                            text = "Add Workout",
+                            style = MaterialTheme.typography.titleMedium,
                         )
                     }
                 }
             },
         )
-        Spacer(Modifier.weight(1f))
-        AddButton(clickAdd = onClickedAdd, "Add Workout", true)
     }
-
-
 }
 
 

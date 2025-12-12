@@ -73,7 +73,7 @@ fun TableCard(
 
         val contentWithHeader: @Composable () -> Unit = {
             Card(
-                colors = CardDefaults.elevatedCardColors(
+                colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.background,
                 ),
                 modifier = Modifier
