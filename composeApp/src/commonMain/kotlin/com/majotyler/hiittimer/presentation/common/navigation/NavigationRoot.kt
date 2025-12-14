@@ -2,6 +2,7 @@ package com.majotyler.hiittimer.presentation.common.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -11,10 +12,12 @@ import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import com.majotyler.hiittimer.presentation.TimerDestination
 import com.majotyler.hiittimer.presentation.TimerScreen
 import com.majotyler.hiittimer.presentation.TimerViewModel
+import com.majotyler.hiittimer.presentation.TimerViewModelFactory
 import com.majotyler.hiittimer.presentation.createWorkoutScreen.CreateWorkoutScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModel
+import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
@@ -57,33 +60,31 @@ private fun HiitNavDisplay() {
             }
 
             entry<Route.Home> {
-                val viewModel = remember {
-                    HomeViewModel(
-                        router = { destination ->
-                            when (destination) {
-                                HomeDestination.NavigateToTimer ->
-                                    backStack.add(element = Route.Timer)
-                            }
+                val viewModelFactory = HomeViewModelFactory(
+                    router = { destination ->
+                        when (destination) {
+                            HomeDestination.NavigateToTimer ->
+                                backStack.add(element = Route.Timer)
                         }
-                    )
-                }
+                    }
+                )
+
                 HomeScreen(
-                    viewModel = viewModel,
+                    viewModel = viewModel(factory = viewModelFactory),
                 )
             }
             entry<Route.Timer> {
-                val viewModel = remember {
-                    TimerViewModel(
-                        router = { destination ->
-                            when (destination) {
-                                TimerDestination.NavigateToAddWorkout ->
-                                    backStack.add(element = Route.AddWorkout)
-                            }
+                val viewModelFactory = TimerViewModelFactory(
+                    router = { destination ->
+                        when (destination) {
+                            TimerDestination.NavigateToAddWorkout ->
+                                backStack.add(element = Route.AddWorkout)
                         }
-                    )
-                }
+                    }
+                )
+
                 TimerScreen(
-                    viewModel = viewModel,
+                    viewModel = viewModel(factory = viewModelFactory),
                 )
             }
         }
