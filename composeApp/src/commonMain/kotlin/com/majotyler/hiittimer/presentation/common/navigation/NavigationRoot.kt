@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import com.majotyler.hiittimer.presentation.TimerDestination
 import com.majotyler.hiittimer.presentation.TimerScreen
 import com.majotyler.hiittimer.presentation.TimerViewModel
@@ -16,10 +17,16 @@ import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModel
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.serializer
 
 @Composable
 fun NavigationRoot() {
+    HiitAppTheme {
+        HiitNavDisplay()
+    }
+}
+
+@Composable
+private fun HiitNavDisplay() {
     val backStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
             this.serializersModule = SerializersModule {
