@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.majotyler.hiittimer.presentation.common.RowClickable
-import com.majotyler.hiittimer.presentation.common.RowWithContent
 import com.majotyler.hiittimer.presentation.common.TableCard
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -62,7 +61,7 @@ fun TimerScreen(viewModel: TimerViewModel) {
     val list by viewModel.exercises.collectAsStateWithLifecycle()
     val reps by viewModel.reps.collectAsStateWithLifecycle()
     val intervals by viewModel.intervals.collectAsStateWithLifecycle()
-    val enable by viewModel.enable.collectAsStateWithLifecycle()
+    val enabled by viewModel.enabled.collectAsStateWithLifecycle()
 
     if (loading) {
         Box(Modifier.fillMaxSize()) {
@@ -110,7 +109,7 @@ fun TimerScreen(viewModel: TimerViewModel) {
                 },
                 text = "Add Interval",
                 modifier = Modifier.fillMaxWidth(),
-                enable = enable,
+                enabled = enabled,
             )
             IntervalsList(
                 intervals = intervals,
@@ -147,9 +146,9 @@ fun IntervalsList(
         content = {
             LazyColumn(Modifier.fillMaxWidth()) {
                 itemsIndexed(intervals) { index, item ->
-                    RowWithContent(
+                    RowClickable(
                         entryNo = index + 1,
-                        header = "${item.reps} Repeticiones",
+                        text = "${item.reps} Repeticiones",
                         lines = item.exercises,
                         onClickedRemove = { deleteInterval(index) }
                     )
@@ -209,7 +208,7 @@ fun RepsButton(
 @Composable
 private fun AddButton(
     text: String,
-    enable: Boolean,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     clickAdd: () -> Unit,
 ) {
@@ -217,7 +216,7 @@ private fun AddButton(
         shape = RoundedCornerShape(size = 12.dp),
         modifier = modifier,
         onClick = clickAdd,
-        enabled = enable
+        enabled = enabled
     ) {
         Text(
             fontWeight = FontWeight.SemiBold,

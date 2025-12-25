@@ -38,6 +38,7 @@ fun TableCard(
     header: String,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
+    headerAlignment: TextAlign= TextAlign.Left
 ) {
     val header: @Composable (modifier: Modifier) -> Unit = {
         Text(
@@ -46,7 +47,7 @@ fun TableCard(
             modifier = it
                 .background(color = MaterialTheme.colorScheme.primaryContainer)
                 .padding(all = 16.dp),
-            textAlign = TextAlign.Left,
+            textAlign = headerAlignment ,
             text = header,
             style = MaterialTheme.typography.titleLarge,
         )
