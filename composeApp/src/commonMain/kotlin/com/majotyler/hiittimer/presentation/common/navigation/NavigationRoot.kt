@@ -3,6 +3,7 @@ package com.majotyler.hiittimer.presentation.common.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -14,6 +15,8 @@ import com.majotyler.hiittimer.presentation.TimerScreen
 import com.majotyler.hiittimer.presentation.TimerViewModel
 import com.majotyler.hiittimer.presentation.TimerViewModelFactory
 import com.majotyler.hiittimer.presentation.createWorkoutScreen.CreateWorkoutScreen
+import com.majotyler.hiittimer.presentation.createWorkoutScreen.WorkoutDestination
+import com.majotyler.hiittimer.presentation.createWorkoutScreen.WorkoutViewModelFactory
 import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModel
@@ -56,7 +59,19 @@ private fun HiitNavDisplay() {
         backStack = backStack,
         entryProvider = entryProvider {
             entry<Route.AddWorkout> {
-                CreateWorkoutScreen()
+                val viewModelFactory = WorkoutViewModelFactory(
+                    router = { destination ->
+                        when (destination) {
+                            WorkoutDestination.NavigateToTimer ->
+                                backStack.remove(Route.AddWorkout)
+
+                        }
+                    }
+                )
+
+                CreateWorkoutScreen(
+                    viewModel = viewModel(factory = viewModelFactory)
+                )
             }
 
             entry<Route.Home> {

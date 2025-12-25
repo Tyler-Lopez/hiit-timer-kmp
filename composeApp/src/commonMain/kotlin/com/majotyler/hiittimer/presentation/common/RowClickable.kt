@@ -38,6 +38,7 @@ fun RowClickable(
     onClickedRemove: () -> Unit,
     onClickedRow: (() -> Unit)? = null,
     showDivider: Boolean = true,
+    lines: List<String> = emptyList()
 ) {
     Column {
         Row(
@@ -76,13 +77,26 @@ fun RowClickable(
                 )
             }
 
-            Text(
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .weight(weight = 1F),
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = text,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                if (lines.isNotEmpty()) {
+                    lines.take(3).forEach {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 2.dp)
+                        )
+                    }
+                }
+            }
+
 
             IconButton(
                 onClick = onClickedRemove,

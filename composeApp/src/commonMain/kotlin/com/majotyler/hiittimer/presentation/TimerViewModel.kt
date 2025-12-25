@@ -37,8 +37,8 @@ class TimerViewModel(
     private val _intervals = MutableStateFlow<List<Interval>>(emptyList())
     val intervals = _intervals.asStateFlow()
 
-    private val _enable = MutableStateFlow(false)
-    val enable = _enable.asStateFlow()
+    private val _enabled = MutableStateFlow(false)
+    val enabled = _enabled.asStateFlow()
 
 
     private val _reps = MutableStateFlow(0)
@@ -48,10 +48,10 @@ class TimerViewModel(
         when (event) {
             is TimerViewEvent.ClickedAdd -> onClickedAdd()
             is TimerViewEvent.ClickedDelete -> onClickedDelete(event.index)
-            is TimerViewEvent.AddReps -> addReps()
-            is TimerViewEvent.RemoveReps -> removeReps()
-            is TimerViewEvent.AddIntervals -> addIntervals()
-            is TimerViewEvent.DeleteIntervals -> deleteIntervals(event.index)
+            is TimerViewEvent.AddReps -> onAddReps()
+            is TimerViewEvent.RemoveReps -> onRemoveReps()
+            is TimerViewEvent.AddIntervals -> onAddIntervals()
+            is TimerViewEvent.DeleteIntervals -> onDeleteIntervals(event.index)
         }
     }
 
@@ -67,33 +67,33 @@ class TimerViewModel(
         }
     }
 
-    private fun deleteIntervals(index: Int) {
+    private fun onDeleteIntervals(index: Int) {
         _intervals.value = _intervals.value.toMutableList().apply {
             removeAt(index)
         }
     }
 
 
-    private fun addReps() {
+    private fun onAddReps() {
         _reps.value++
-        validAdd()
+        setAddButtonEnabled()
     }
 
-    private fun removeReps() {
+    private fun onRemoveReps() {
         if (_reps.value > 0) _reps.value--
-        validAdd()
+        setAddButtonEnabled()
     }
 
-    private fun addIntervals() {
+    private fun onAddIntervals() {
         val newInterval = Interval(_exercises.value, _reps.value)
         _intervals.value = _intervals.value + newInterval
         _exercises.value = emptyList()
         _reps.value = 0
-        validAdd()
+        setAddButtonEnabled()
     }
 
-    private fun validAdd() {
-        _enable.value = _reps.value > 0 && _exercises.value.isNotEmpty()
+    private fun setAddButtonEnabled() {
+        _enabled.value = _reps.value > 0 && _exercises.value.isNotEmpty()
     }
 
 
