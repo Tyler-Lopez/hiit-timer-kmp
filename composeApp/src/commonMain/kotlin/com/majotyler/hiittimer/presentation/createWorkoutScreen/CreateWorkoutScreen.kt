@@ -1,240 +1,360 @@
 package com.majotyler.hiittimer.presentation.createWorkoutScreen
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.majotyler.hiittimer.presentation.common.RowClickable
 import com.majotyler.hiittimer.presentation.common.TableCard
+import com.majotyler.hiittimer.presentation.common.expect.BackHandler
+import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview(showBackground = true)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateWorkoutScreen(viewModel: WorkoutViewModel) {
     val nameWorkout by viewModel.nameWorkout.collectAsStateWithLifecycle()
     val enabled by viewModel.enabled.collectAsStateWithLifecycle()
-    Column(
-        modifier = Modifier
-            .fillMaxSize().background(color = MaterialTheme.colorScheme.background)
-            .safeDrawingPadding()
-            .padding(horizontal = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(space = 8.dp)
-    ) {
-        Column(
-            modifier = Modifier.weight(1f).padding(bottom = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            WorkoutName(nameWorkout) { viewModel.onEvent(WorkoutViewEvent.NameWorkout(it)) }
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
-            ) {
-                Column(Modifier.weight(1F), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ExerciseName()
-                    TimeAndRest(Modifier.weight(1f).fillMaxHeight())
+    val page by viewModel.page.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = true) {
+        viewModel.onEvent(event = WorkoutViewEvent.ClickedNavigateUp)
+    }
+
+    CreateWorkoutScreenContent(
+        addExerciseButtonIsEnabled = false,
+        bottomBarButtonIsEnabled = true,
+        nameExercise = "",
+        nameWorkout = nameWorkout,
+        page = page,
+        secondsDuration = 0,
+        secondsRest = 0,
+        onExerciseNameChanged = {},
+        onWorkoutNameChanged = {
+            viewModel.onEvent(event = WorkoutViewEvent.NameWorkout(newNameWorkout = it))
+        },
+        onDurationChanged = {},
+        onRestChanged = {},
+        onClickedAddExercise = {},
+        onClickedBottomBarButton = {
+            viewModel.onEvent(event = WorkoutViewEvent.ClickedAdvanceButton)
+        },
+        onClickedNavigateUp = {
+            viewModel.onEvent(event = WorkoutViewEvent.ClickedNavigateUp)
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CreateWorkoutScreenContent(
+    addExerciseButtonIsEnabled: Boolean,
+    bottomBarButtonIsEnabled: Boolean,
+    nameExercise: String,
+    nameWorkout: String,
+    page: CreateWorkoutPage,
+    secondsDuration: Int,
+    secondsRest: Int,
+    onClickedAddExercise: () -> Unit,
+    onExerciseNameChanged: (String) -> Unit,
+    onWorkoutNameChanged: (String) -> Unit,
+    onDurationChanged: (String) -> Unit,
+    onRestChanged: (String) -> Unit,
+    onClickedBottomBarButton: () -> Unit,
+    onClickedNavigateUp: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "Create Workout")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onClickedNavigateUp,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Navigate up",
+                        )
+                    }
                 }
-                AddExercise()
-            }
-        }
-        Column(
-            modifier = Modifier.weight(1f).padding(top = 4.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ExerciseList(Modifier.weight(1f).fillMaxWidth())
-            ButtonReady(enabled) { viewModel.onEvent(WorkoutViewEvent.AddWorkout) }
-        }
-    }
-}
-
-@Composable
-fun ButtonReady(enabled: Boolean, addWorkout: () -> Unit) {
-    Button(
-        shape = RoundedCornerShape(size = 12.dp),
-        onClick = { addWorkout() },
-        modifier = Modifier.fillMaxWidth(),
-        enabled = enabled
-    ) {
-        Text(
-            fontWeight = FontWeight.SemiBold,
-            text = "Ready",
-            style = MaterialTheme.typography.titleLarge,
-        )
-    }
-}
-
-@Composable
-fun ExerciseList(modifier: Modifier) {
-    val prub = listOf("burpees", "sentadillas", "abdominales", "saltos", "4")
-
-    LazyColumn(modifier) {
-        itemsIndexed(prub) { index, item ->
-            RowClickable(
-                entryNo = index + 1,
-                text = "${item} ",
-                onClickedRemove = {}
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                content = {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Button(
+                            enabled = bottomBarButtonIsEnabled,
+                            onClick = onClickedBottomBarButton,
+                        ) {
+                            Text(text = page.actionButtonText)
+                        }
+                    }
+                },
             )
         }
-    }
+    ) { innerPadding ->
 
-
-}
-
-@Composable
-fun AddExercise() {
-    Button(
-        onClick = {},
-        modifier = Modifier.fillMaxHeight(),
-        shape = RoundedCornerShape(12.dp),
-
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues = innerPadding)
         ) {
-        Icon(
-            imageVector = Icons.Default.ArrowDownward,
-            contentDescription = "Add exercise",
-            tint = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-}
+            HorizontalDivider()
 
-@Composable
-fun TimeAndRest(modifier: Modifier) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        TableCard(
-            header = "Time",
-            modifier = modifier,
-            headerAlignment = TextAlign.Center,
-            content = {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            val pagerState = rememberPagerState(
+                initialPage = remember { page.ordinal },
+                pageCount = { CreateWorkoutPage.entries.size },
+            )
+
+            LaunchedEffect(page) {
+                pagerState.animateScrollToPage(
+                    page = page.ordinal,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                    )
+                )
+            }
+
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState,
+                userScrollEnabled = false,
+            ) {
+                val page = CreateWorkoutPage.entries.get(index = it)
+
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 24.dp, vertical = 12.dp),
                 ) {
-                    TextButton(
-                        onClick = { }
-                    ) {
-                        Text(
-                            text = "00.00",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.secondary
+                    when (page) {
+                        CreateWorkoutPage.ADD_EXERCISES -> CreateWorkoutAddExercisesPage(
+                            addExerciseButtonIsEnabled = addExerciseButtonIsEnabled,
+                            nameExercise = nameExercise,
+                            secondsDuration = secondsDuration,
+                            secondsRest = secondsRest,
+                            onClickedAddExercise = onClickedAddExercise,
+                            onExerciseNameChanged = onExerciseNameChanged,
+                            onDurationChanged = onDurationChanged,
+                            onRestChanged = onRestChanged,
                         )
-                    }
-                }
-            })
 
-        TableCard(
-            header = "Rest",
-            modifier = modifier,
-            headerAlignment = TextAlign.Center,
-            content = {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    TextButton(
-                        onClick = { }
-                    ) {
-                        Text(
-                            text = "00.00",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.secondary
+                        CreateWorkoutPage.NAME_WORKOUT -> CreateWorkoutNameWorkoutPage(
+                            nameWorkout = nameWorkout,
+                            onWorkoutNameChanged = onWorkoutNameChanged,
                         )
                     }
                 }
             }
-        )
-
-
+        }
     }
 }
 
 @Composable
-fun ExerciseName() {
-    TableCard(header = "Exercise Name", content = {
+private fun CreateWorkoutAddExercisesPage(
+    addExerciseButtonIsEnabled: Boolean,
+    nameExercise: String,
+    secondsDuration: Int,
+    secondsRest: Int,
+    onClickedAddExercise: () -> Unit,
+    onDurationChanged: (String) -> Unit,
+    onRestChanged: (String) -> Unit,
+    onExerciseNameChanged: (String) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(space = 8.dp)) {
+        Text(
+            text = "Add Exercise",
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        Text(
+            text = "A Workout has at least one exercise. Each exercise has a duration, and a rest period that follows it.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+
         TextField(
-            value = "",
-            onValueChange = {},
+            value = nameExercise,
+            maxLines = 1,
+            onValueChange = onExerciseNameChanged,
+            modifier = Modifier.fillMaxWidth(),
+            label = {
+                Text(text = "Exercise Name")
+            },
+        )
+
+        TextField(
+            maxLines = 1,
+            label = {
+                Text(text = "Duration")
+            },
+            value = secondsDuration.toString(),
+            onValueChange = onDurationChanged,
+            modifier = Modifier.fillMaxWidth(),
+            suffix = {
+                Text(text = "seconds")
+            },
+        )
+
+        TextField(
+            maxLines = 1,
+            label = {
+                Text(text = "Rest")
+            },
+            value = secondsRest.toString(),
+            onValueChange = onRestChanged,
+            modifier = Modifier.fillMaxWidth(),
+            suffix = {
+                Text(text = "seconds")
+            },
+        )
+
+        OutlinedButton(
+            enabled = addExerciseButtonIsEnabled,
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onClickedAddExercise,
+        ) {
+            Text(
+                text = "Add Exercise to Workout",
+            )
+        }
+
+        HorizontalDivider()
+
+        TableCard(
+            header = "Exercises in Workout",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
-            placeholder = {
-                Text("Enter your exercise")
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                errorContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
-            ),
-        )
+                .weight(weight = 1F),
+            content = {
 
-    })
+            },
+        )
+    }
 
 }
 
 @Composable
-fun WorkoutName(nameWorkout: String, workoutName: (String) -> Unit) {
-    Column() {
-        TableCard(
-            header = "Workout Name",
-            headerAlignment = TextAlign.Center,
+private fun CreateWorkoutNameWorkoutPage(
+    nameWorkout: String,
+    onWorkoutNameChanged: (String) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(space = 8.dp)) {
+        Text(
+            text = "Name Workout",
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        TextField(
+            value = nameWorkout,
+            maxLines = 1,
+            onValueChange = onWorkoutNameChanged,
             modifier = Modifier.fillMaxWidth(),
+            label = {
+                Text(text = "Workout Name")
+            },
+        )
+
+
+        HorizontalDivider()
+
+        Text(
+            text = "Workout Preview",
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        TableCard(
+            header = "Exercises in Workout",
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(weight = 1F),
             content = {
 
-                TextField(
-                    value = nameWorkout,
-                    onValueChange = { workoutName(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    placeholder = {
-                        Text("Enter your workout name")
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        errorContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        errorIndicatorColor = Color.Transparent
-                    ),
-                )
-
-            }
-
+            },
         )
     }
+}
 
+@Preview
+@Composable
+private fun CreateWorkoutScreenContent_Preview() {
+    HiitAppTheme {
+        CreateWorkoutScreenContent(
+            addExerciseButtonIsEnabled = false,
+            bottomBarButtonIsEnabled = true,
+            nameExercise = "",
+            nameWorkout = "",
+            page = CreateWorkoutPage.ADD_EXERCISES,
+            secondsDuration = 0,
+            secondsRest = 0,
+            onExerciseNameChanged = {},
+            onDurationChanged = {},
+            onRestChanged = {},
+            onClickedBottomBarButton = {},
+            onClickedNavigateUp = {},
+            onClickedAddExercise = {},
+            onWorkoutNameChanged = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun CreateWorkoutScreenContent_NameWorkout_Preview() {
+    HiitAppTheme {
+        CreateWorkoutScreenContent(
+            addExerciseButtonIsEnabled = false,
+            bottomBarButtonIsEnabled = true,
+            nameExercise = "",
+            nameWorkout = "",
+            page = CreateWorkoutPage.NAME_WORKOUT,
+            secondsDuration = 0,
+            secondsRest = 0,
+            onExerciseNameChanged = {},
+            onDurationChanged = {},
+            onRestChanged = {},
+            onClickedBottomBarButton = {},
+            onClickedNavigateUp = {},
+            onClickedAddExercise = {},
+            onWorkoutNameChanged = {},
+        )
+    }
 }

@@ -12,21 +12,42 @@ class WorkoutViewModel(private val router: Router<WorkoutDestination>) : ViewMod
     private val _enabled = MutableStateFlow(false)
     val enabled = _enabled.asStateFlow()
 
+    private val _page = MutableStateFlow(value = CreateWorkoutPage.entries.first())
+    val page = _page.asStateFlow()
+
     fun onEvent(event: WorkoutViewEvent) {
         when (event) {
             is WorkoutViewEvent.NameWorkout -> onNameWorkout(event.newNameWorkout)
             is WorkoutViewEvent.AddWorkout -> onAddWorkout()
-
+            is WorkoutViewEvent.ClickedAdvanceButton -> onClickedAdvanceButton()
+            is WorkoutViewEvent.ClickedNavigateUp -> onClickedNavigateUp()
         }
     }
 
-    fun onNameWorkout(newNameWorkout: String) {
+    private fun onNameWorkout(newNameWorkout: String) {
         _nameWorkout.value = newNameWorkout
         _enabled.value = newNameWorkout.isNotBlank()
     }
 
-    fun onAddWorkout() {
+    private fun onAddWorkout() {
         router.routeTo(destination = WorkoutDestination.NavigateToTimer)
+    }
 
+    private fun onClickedAdvanceButton() {
+        val newOrdinal = _page.value.ordinal + 1
+
+        if (newOrdinal <= CreateWorkoutPage.entries.lastIndex) {
+            _page.value = CreateWorkoutPage.entries.get(index = newOrdinal)
+        } else {
+            // TODO, this indicates we should create and add the workout
+        }
+    }
+
+    private fun onClickedNavigateUp() {
+        val newOrdinal = _page.value.ordinal - 1
+
+        if (newOrdinal >= 0) {
+            _page.value = CreateWorkoutPage.entries.get(index = newOrdinal)
+        }
     }
 }
