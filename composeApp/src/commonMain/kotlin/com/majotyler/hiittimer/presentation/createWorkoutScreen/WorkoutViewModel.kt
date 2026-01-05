@@ -12,10 +12,14 @@ class WorkoutViewModel(private val router: Router<WorkoutDestination>) : ViewMod
     private val _enabled = MutableStateFlow(false)
     val enabled = _enabled.asStateFlow()
 
+    private val _page = MutableStateFlow(value = AddWorkoutPage.entries.first())
+    val page = _page.asStateFlow()
+
     fun onEvent(event: WorkoutViewEvent) {
         when (event) {
             is WorkoutViewEvent.NameWorkout -> onNameWorkout(event.newNameWorkout)
-            is WorkoutViewEvent.AddWorkout -> onAddWorkout()
+            is WorkoutViewEvent.ClickedAddExercise -> onClickedAddExercise()
+            is WorkoutViewEvent.ClickedAdvance -> onClickedAdvance()
             is WorkoutViewEvent.ClickedNavigateUp -> onClickedNavigateUp()
         }
     }
@@ -25,12 +29,33 @@ class WorkoutViewModel(private val router: Router<WorkoutDestination>) : ViewMod
         _enabled.value = newNameWorkout.isNotBlank()
     }
 
-    private fun onAddWorkout() {
-        router.routeTo(destination = WorkoutDestination.NavigateToTimer)
+    private fun onClickedAddExercise() {
+
+    }
+
+    private fun onClickedAdvance() {
+        val nextPageOrdinal = page.value.ordinal + 1
+        val wasOnLastPage = nextPageOrdinal > AddWorkoutPage.entries.lastIndex
+
+        if (wasOnLastPage) {
+            // TODO
+            // There is a bug here, because we should actually "pop" this screen so that when you click
+            // back this screen goes away rather than persisting in the back stack.
+            router.routeTo(destination = WorkoutDestination.NavigateToTimer)
+        } else {
+            _page.value = AddWorkoutPage.entries[nextPageOrdinal]
+        }
     }
 
     private fun onClickedNavigateUp() {
-        // TODO (This needs to navigate up so you go back to the previous screen, maybe with a
-        // "are you sure" type message
+        val nextPageOrdinal = page.value.ordinal - 1
+        val wasOnFirstPage = nextPageOrdinal < 0
+
+        if (wasOnFirstPage) {
+            // TODO (This needs to navigate up so you go back to the previous screen, maybe with a
+            // "are you sure" type message
+        } else {
+            _page.value = AddWorkoutPage.entries[nextPageOrdinal]
+        }
     }
 }
