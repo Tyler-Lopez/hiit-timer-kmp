@@ -1,6 +1,7 @@
 package com.majotyler.hiittimer.domain.model
 
 data class Interval(
-    val workouts: List<Workout>,
-    val repetitions: Int,
+    val duration: Int,
+    val name: String,
+    val rest: Int,
 )
