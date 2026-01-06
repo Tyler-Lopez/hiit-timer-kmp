@@ -1,18 +1,9 @@
 package com.majotyler.hiittimer.presentation
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.majotyler.hiittimer.presentation.common.navigation.Router
-import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-
-data class Interval(
-    val exercises: List<String>,
-    val reps: Int
-)
 
 class TimerViewModel(
     private val router: Router<TimerDestination>,
@@ -21,7 +12,7 @@ class TimerViewModel(
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
-    private val _exercises =
+    private val _workouts =
         MutableStateFlow(
             listOf(
                 "Lagartijas",
@@ -32,95 +23,28 @@ class TimerViewModel(
                 "otro"
             )
         )
-    val exercises = _exercises.asStateFlow()
-
-    private val _intervals = MutableStateFlow<List<Interval>>(emptyList())
-    val intervals = _intervals.asStateFlow()
+    val workouts = _workouts.asStateFlow()
 
     private val _enabled = MutableStateFlow(false)
     val enabled = _enabled.asStateFlow()
 
-
-    private val _reps = MutableStateFlow(0)
-    val reps = _reps.asStateFlow()
-
     fun onEvent(event: TimerViewEvent) {
         when (event) {
-            is TimerViewEvent.ClickedAdd -> onClickedAdd()
-            is TimerViewEvent.ClickedDelete -> onClickedDelete(event.index)
-            is TimerViewEvent.AddReps -> onAddReps()
-            is TimerViewEvent.RemoveReps -> onRemoveReps()
-            is TimerViewEvent.AddIntervals -> onAddIntervals()
-            is TimerViewEvent.DeleteIntervals -> onDeleteIntervals(event.index)
+            is TimerViewEvent.ClickedAddWorkout -> onClickedAddWorkout()
+            is TimerViewEvent.ClickedDeleteWorkout -> onClickedDeleteWorkout(event.index)
         }
     }
 
-    private fun onClickedAdd() {
+    private fun onClickedAddWorkout() {
         val list = listOf("1", "2", "4", "5")
-        _exercises.value = list
+        _workouts.value = list
         router.routeTo(destination = TimerDestination.NavigateToAddWorkout)
     }
 
-    private fun onClickedDelete(index: Int) {
-        _exercises.value = _exercises.value.toMutableList().apply {
+    private fun onClickedDeleteWorkout(index: Int) {
+        _workouts.value = _workouts.value.toMutableList().apply {
             removeAt(index)
         }
     }
-
-    private fun onDeleteIntervals(index: Int) {
-        _intervals.value = _intervals.value.toMutableList().apply {
-            removeAt(index)
-        }
-    }
-
-
-    private fun onAddReps() {
-        _reps.value++
-        setAddButtonEnabled()
-    }
-
-    private fun onRemoveReps() {
-        if (_reps.value > 0) _reps.value--
-        setAddButtonEnabled()
-    }
-
-    private fun onAddIntervals() {
-        val newInterval = Interval(_exercises.value, _reps.value)
-        _intervals.value = _intervals.value + newInterval
-        _exercises.value = emptyList()
-        _reps.value = 0
-        setAddButtonEnabled()
-    }
-
-    private fun setAddButtonEnabled() {
-        _enabled.value = _reps.value > 0 && _exercises.value.isNotEmpty()
-    }
-
-
 }
-
-//  private val _state = MutableStateFlow(value = TimerViewState(seconds = 0))
-//val state = _state.asStateFlow()
-
-
-//fun onEvent(event: TimerViewEvent) {
-//  when (event) {
-//    is TimerViewEvent.ClickedStartTimer -> onClickedStartTimer()
-//  is TimerViewEvent.ClickedStopTimer -> onClickedStopTimer()
-//}
-//}
-
-//private fun onClickedStartTimer() {
-//  /** TODO (Tyler):
-// * Start incrementing the seconds of the [_state].
-//*/
-//}
-
-//private fun onClickedStopTimer() {
-//  /** TODO (Tyler):
-// * Stop incrementing the seconds of the [_state].
-//*/
-//}
-
-
     
