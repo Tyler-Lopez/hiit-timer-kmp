@@ -30,10 +30,15 @@ class TimerViewModel(
 
     fun onEvent(event: TimerViewEvent) {
         when (event) {
+            is TimerViewEvent.AddedWorkout -> onAddedWorkout(event = event)
             is TimerViewEvent.ClickedAddWorkout -> onClickedAddWorkout()
             is TimerViewEvent.ClickedDeleteWorkout -> onClickedDeleteWorkout(event.index)
             is TimerViewEvent.ClickedGo -> onClickedGo()
         }
+    }
+
+    private fun onAddedWorkout(event: TimerViewEvent.AddedWorkout) {
+        println("Workout added ${event.workout}")
     }
 
     private fun onClickedAddWorkout() {
