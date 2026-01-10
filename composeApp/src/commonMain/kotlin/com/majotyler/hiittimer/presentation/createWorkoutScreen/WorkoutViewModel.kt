@@ -1,6 +1,7 @@
 package com.majotyler.hiittimer.presentation.createWorkoutScreen
 
 import androidx.lifecycle.ViewModel
+import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.navigation.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,10 +39,15 @@ class WorkoutViewModel(private val router: Router<WorkoutDestination>) : ViewMod
         val wasOnLastPage = nextPageOrdinal > AddWorkoutPage.entries.lastIndex
 
         if (wasOnLastPage) {
-            // TODO
-            // There is a bug here, because we should actually "pop" this screen so that when you click
-            // back this screen goes away rather than persisting in the back stack.
-            router.routeTo(destination = WorkoutDestination.NavigateToTimer)
+            router.routeTo(
+                destination = WorkoutDestination.AddWorkout(
+                    workout = Workout(
+                        intervals = emptyList(),
+                        name = "TODO",
+                        repetitions = 1,
+                    )
+                )
+            )
         } else {
             _page.value = AddWorkoutPage.entries[nextPageOrdinal]
         }

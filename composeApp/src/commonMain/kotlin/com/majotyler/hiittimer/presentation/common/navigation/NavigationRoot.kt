@@ -9,9 +9,11 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import com.majotyler.hiittimer.presentation.TimerDestination
 import com.majotyler.hiittimer.presentation.TimerScreen
+import com.majotyler.hiittimer.presentation.TimerViewEvent
 import com.majotyler.hiittimer.presentation.TimerViewModel
 import com.majotyler.hiittimer.presentation.TimerViewModelFactory
 import com.majotyler.hiittimer.presentation.createWorkoutScreen.CreateWorkoutScreen
@@ -25,6 +27,8 @@ import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutScreen
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutVIewModel
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Composable
 fun NavigationRoot() {
@@ -33,8 +37,12 @@ fun NavigationRoot() {
     }
 }
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun HiitNavDisplay() {
+
+    val resultBus = remember { ResultEventBus() }
+
     val backStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
             this.serializersModule = SerializersModule {
@@ -60,19 +68,23 @@ private fun HiitNavDisplay() {
     NavDisplay(
         backStack = backStack,
         entryProvider = entryProvider {
-            entry<Route.AddWorkout> {
+            entry<Route.AddWorkout> { navEntry ->
                 val viewModelFactory = WorkoutViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            WorkoutDestination.NavigateToTimer ->
-                                backStack.remove(Route.AddWorkout)
-
+                            is WorkoutDestination.AddWorkout -> {
+                                resultBus.sendResult<Workout>(result = destination.workout)
+                                backStack.removeLast()
+                            }
                         }
                     }
                 )
 
                 CreateWorkoutScreen(
-                    viewModel = viewModel(factory = viewModelFactory)
+                    viewModel = viewModel(
+                        key = Uuid.random().toString(),
+                        factory = viewModelFactory,
+                    )
                 )
             }
 
@@ -80,8 +92,9 @@ private fun HiitNavDisplay() {
                 val viewModelFactory = HomeViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            HomeDestination.NavigateToTimer ->
+                            HomeDestination.NavigateToTimer -> {
                                 backStack.add(element = Route.Timer)
+                            }
                         }
                     }
                 )
@@ -101,6 +114,16 @@ private fun HiitNavDisplay() {
                         }
                     }
                 )
+
+                val viewModel: TimerViewModel = viewModel<TimerViewModel>(
+                    factory = viewModelFactory,
+                )
+
+                ResultEffect<Workout>(resultBus) { workout ->
+                    viewModel.onEvent(
+                        event = TimerViewEvent.AddedWorkout(workout = workout)
+                    )
+                }
 
                 TimerScreen(
                     viewModel = viewModel(factory = viewModelFactory),

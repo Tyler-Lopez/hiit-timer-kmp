@@ -33,6 +33,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.TableCard
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -41,7 +42,9 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CreateWorkoutScreen(viewModel: WorkoutViewModel) {
+fun CreateWorkoutScreen(
+    viewModel: WorkoutViewModel,
+) {
     val nameWorkout by viewModel.nameWorkout.collectAsStateWithLifecycle()
     val enabled by viewModel.enabled.collectAsStateWithLifecycle()
     val page by viewModel.page.collectAsStateWithLifecycle()
