@@ -21,6 +21,8 @@ import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModel
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
+import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutScreen
+import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutVIewModel
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
@@ -94,6 +96,8 @@ private fun HiitNavDisplay() {
                         when (destination) {
                             TimerDestination.NavigateToAddWorkout ->
                                 backStack.add(element = Route.AddWorkout)
+                            TimerDestination.NavigateToPlayWorkout->
+                                backStack.add(Route.PlayWorkout)
                         }
                     }
                 )
@@ -101,6 +105,11 @@ private fun HiitNavDisplay() {
                 TimerScreen(
                     viewModel = viewModel(factory = viewModelFactory),
                 )
+            }
+
+            entry<Route.PlayWorkout> {
+                val viewModel: PlayWorkoutVIewModel = viewModel()
+                PlayWorkoutScreen(viewModel)
             }
         }
     )

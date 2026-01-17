@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -34,7 +35,7 @@ private fun PlayWorkoutContent(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
-            .safeDrawingPadding(),
+            .safeDrawingPadding(), contentAlignment = Alignment.Center
     ) {
         Text(text = "Placeholder text.")
     }
