@@ -19,4 +19,7 @@ sealed interface Route : NavKey {
 
     @Serializable
     data object Timer : Route
+
+    @Serializable
+    data object PlayWorkout: Route
 }

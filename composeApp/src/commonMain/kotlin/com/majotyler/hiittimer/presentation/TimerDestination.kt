@@ -44,4 +44,5 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 sealed interface TimerDestination : Destination {
     data object NavigateToAddWorkout : TimerDestination
+    data object NavigateToPlayWorkout: TimerDestination
 }

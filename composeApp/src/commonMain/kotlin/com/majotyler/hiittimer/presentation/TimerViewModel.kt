@@ -32,6 +32,7 @@ class TimerViewModel(
         when (event) {
             is TimerViewEvent.ClickedAddWorkout -> onClickedAddWorkout()
             is TimerViewEvent.ClickedDeleteWorkout -> onClickedDeleteWorkout(event.index)
+            is TimerViewEvent.ClickedGo -> onClickedGo()
         }
     }
 
@@ -45,6 +46,10 @@ class TimerViewModel(
         _workouts.value = _workouts.value.toMutableList().apply {
             removeAt(index)
         }
+    }
+
+    private fun onClickedGo(){
+        router.routeTo(TimerDestination.NavigateToPlayWorkout)
     }
 }
     

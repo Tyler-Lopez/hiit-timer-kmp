@@ -85,17 +85,17 @@ fun TimerScreen(viewModel: TimerViewModel) {
                     },
                 )
             }
-            StartButton()
+            StartButton{viewModel.onEvent(TimerViewEvent.ClickedGo)}
         }
     }
 }
 
 @Composable
-fun StartButton() {
+fun StartButton(onClickedGo: () -> Unit) {
     Button(
         shape = RoundedCornerShape(size = 12.dp),
         modifier = Modifier.fillMaxWidth(),
-        onClick = {},
+        onClick = {onClickedGo()},
     ) {
         Text(
             text = "Go",

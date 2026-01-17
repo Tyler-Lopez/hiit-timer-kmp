@@ -6,4 +6,5 @@ import androidx.compose.runtime.Immutable
 sealed interface TimerViewEvent {
     data object ClickedAddWorkout : TimerViewEvent
     data class ClickedDeleteWorkout(val index: Int) : TimerViewEvent
+    data object ClickedGo: TimerViewEvent
 }
