@@ -3,7 +3,6 @@ package com.majotyler.hiittimer.presentation.common.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -16,12 +15,11 @@ import com.majotyler.hiittimer.presentation.TimerScreen
 import com.majotyler.hiittimer.presentation.TimerViewEvent
 import com.majotyler.hiittimer.presentation.TimerViewModel
 import com.majotyler.hiittimer.presentation.TimerViewModelFactory
-import com.majotyler.hiittimer.presentation.createWorkoutScreen.CreateWorkoutScreen
-import com.majotyler.hiittimer.presentation.createWorkoutScreen.WorkoutDestination
-import com.majotyler.hiittimer.presentation.createWorkoutScreen.WorkoutViewModelFactory
+import com.majotyler.hiittimer.presentation.addWorkoutScreen.CreateWorkoutScreen
+import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutDestination
+import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutViewModelFactory
 import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
-import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModel
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutScreen
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutVIewModel
@@ -69,10 +67,10 @@ private fun HiitNavDisplay() {
         backStack = backStack,
         entryProvider = entryProvider {
             entry<Route.AddWorkout> { navEntry ->
-                val viewModelFactory = WorkoutViewModelFactory(
+                val viewModelFactory = AddWorkoutViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            is WorkoutDestination.AddWorkout -> {
+                            is AddWorkoutDestination.AddWorkout -> {
                                 resultBus.sendResult<Workout>(result = destination.workout)
                                 backStack.removeLast()
                             }
