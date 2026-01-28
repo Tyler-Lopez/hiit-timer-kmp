@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.RowClickable
 import com.majotyler.hiittimer.presentation.common.TableCard
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -106,7 +107,7 @@ fun StartButton(onClickedGo: () -> Unit) {
 
 @Composable
 fun Workouts(
-    list: List<String>,
+    list: List<Workout>,
     modifier: Modifier = Modifier,
     onClickedAdd: () -> Unit,
     onDelete: (index: Int) -> Unit,
@@ -129,7 +130,11 @@ fun Workouts(
                         itemsIndexed(list) { index, item ->
                             RowClickable(
                                 entryNo = index + 1,
-                                text = item,
+                                text = item.name,
+                                lines = listOf(
+                                    item.intervals.joinToString { "$it " },
+                                    item.repetitions.toString(),
+                                ),
                                 onClickedRow = null,
                                 onClickedRemove = { onDelete(index) },
                                 showDivider = index != list.lastIndex,

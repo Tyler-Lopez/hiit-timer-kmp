@@ -1,6 +1,7 @@
 package com.majotyler.hiittimer.presentation
 
 import androidx.lifecycle.ViewModel
+import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.navigation.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,17 +13,7 @@ class TimerViewModel(
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
-    private val _workouts =
-        MutableStateFlow(
-            listOf(
-                "Lagartijas",
-                "gallitos",
-                "dominadas",
-                " sentadillas",
-                "hola",
-                "otro"
-            )
-        )
+    private val _workouts = MutableStateFlow(value = emptyList<Workout>())
     val workouts = _workouts.asStateFlow()
 
     private val _enabled = MutableStateFlow(false)
@@ -38,12 +29,10 @@ class TimerViewModel(
     }
 
     private fun onAddedWorkout(event: TimerViewEvent.AddedWorkout) {
-        println("Workout added ${event.workout}")
+        _workouts.value += event.workout
     }
 
     private fun onClickedAddWorkout() {
-        val list = listOf("1", "2", "4", "5")
-        _workouts.value = list
         router.routeTo(destination = TimerDestination.NavigateToAddWorkout)
     }
 

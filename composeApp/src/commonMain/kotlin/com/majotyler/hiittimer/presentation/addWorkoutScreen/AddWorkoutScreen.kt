@@ -1,4 +1,4 @@
-package com.majotyler.hiittimer.presentation.createWorkoutScreen
+package com.majotyler.hiittimer.presentation.addWorkoutScreen
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,13 +31,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.majotyler.hiittimer.domain.model.Workout
+import com.majotyler.hiittimer.domain.model.Interval
+import com.majotyler.hiittimer.presentation.common.RowClickable
 import com.majotyler.hiittimer.presentation.common.TableCard
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -43,57 +47,89 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateWorkoutScreen(
-    viewModel: WorkoutViewModel,
+    viewModel: AddWorkoutViewModel,
 ) {
-    val nameWorkout by viewModel.nameWorkout.collectAsStateWithLifecycle()
-    val enabled by viewModel.enabled.collectAsStateWithLifecycle()
-    val page by viewModel.page.collectAsStateWithLifecycle()
+    val enabledAddExercise = viewModel.enabledAddInterval.collectAsStateWithLifecycle()
+    val enabledAdvance = viewModel.enabledAdvance.collectAsStateWithLifecycle()
+    val enabledWorkoutDecreaseRepetitions = viewModel.enabledDecreaseRepetitions.collectAsStateWithLifecycle()
+
+    val exerciseName = viewModel.nameInterval.collectAsStateWithLifecycle()
+    val exerciseWorkout = viewModel.nameWorkout.collectAsStateWithLifecycle()
+
+    val intervals = viewModel.intervals.collectAsStateWithLifecycle()
+
+    val page = viewModel.page.collectAsStateWithLifecycle()
+
+    val secondsDuration = viewModel.secondsDuration.collectAsStateWithLifecycle()
+    val secondsRest = viewModel.secondsRest.collectAsStateWithLifecycle()
+
+    val workoutRepetitions = viewModel.workoutRepetitions.collectAsStateWithLifecycle()
 
     CreateWorkoutScreenContent(
-        addExerciseButtonIsEnabled = false,
-        bottomBarButtonIsEnabled = true,
-        nameExercise = "",
-        nameWorkout = nameWorkout,
-        repetitions = 1,
-        page = page,
-        secondsDuration = 0,
-        secondsRest = 0,
-        onExerciseNameChanged = {},
-        onWorkoutNameChanged = {
-            viewModel.onEvent(event = WorkoutViewEvent.NameWorkout(newNameWorkout = it))
+        addIntervalButtonIsEnabled = enabledAddExercise.value,
+        bottomBarButtonIsEnabled = enabledAdvance.value,
+        enabledWorkoutDecreaseRepetitions = enabledWorkoutDecreaseRepetitions.value,
+        intervals = intervals.value,
+        nameInterval = exerciseName.value,
+        nameWorkout = exerciseWorkout.value,
+        workoutRepetitions = workoutRepetitions.value,
+        page = page.value,
+        secondsDuration = secondsDuration.value,
+        secondsRest = secondsRest.value,
+        onIntervalNameChanged = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedIntervalName(name = it))
         },
-        onDurationChanged = {},
-        onRepetitionsDecreased = {},
-        onRepetitionsIncreased = {},
-        onRestChanged = {},
-        onClickedAddExercise = {},
+        onWorkoutNameChanged = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedWorkoutName(name = it))
+        },
+        onIntervalDurationChanged = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedIntervalDuration(seconds = it))
+        },
+        onIntervalRestChanged = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedIntervalRest(seconds = it))
+        },
+        onRepetitionsDecreased = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.WorkoutRepetitionsDecreased)
+        },
+        onRepetitionsIncreased = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.WorkoutRepetitionsIncreased)
+        },
+        onClickedAddInterval = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedAddIntervalToWorkout)
+        },
         onClickedBottomBarButton = {
-            viewModel.onEvent(event = WorkoutViewEvent.ClickedAdvance)
+            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedAdvance)
         },
         onClickedNavigateUp = {
-            viewModel.onEvent(event = WorkoutViewEvent.ClickedNavigateUp)
+            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedNavigateUp)
         },
+        onClickedRemoveInterval = {
+            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedDeleteInterval(index = it))
+        }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreateWorkoutScreenContent(
-    addExerciseButtonIsEnabled: Boolean,
+    addIntervalButtonIsEnabled: Boolean,
     bottomBarButtonIsEnabled: Boolean,
-    nameExercise: String,
+    enabledWorkoutDecreaseRepetitions: Boolean,
+    intervals: List<Interval>,
+    nameInterval: String,
     nameWorkout: String,
-    repetitions: Int,
+    workoutRepetitions: Int,
     page: AddWorkoutPage,
     secondsDuration: Int,
     secondsRest: Int,
-    onClickedAddExercise: () -> Unit,
-    onExerciseNameChanged: (String) -> Unit,
+    onClickedAddInterval: () -> Unit,
+    onClickedRemoveInterval: (Int) -> Unit,
+    onIntervalNameChanged: (String) -> Unit,
     onWorkoutNameChanged: (String) -> Unit,
-    onDurationChanged: (String) -> Unit,
+    onIntervalDurationChanged: (String) -> Unit,
+    onIntervalRestChanged: (String) -> Unit,
     onRepetitionsDecreased: () -> Unit,
     onRepetitionsIncreased: () -> Unit,
-    onRestChanged: (String) -> Unit,
     onClickedBottomBarButton: () -> Unit,
     onClickedNavigateUp: () -> Unit,
 ) {
@@ -173,15 +209,17 @@ private fun CreateWorkoutScreenContent(
                     verticalArrangement = Arrangement.spacedBy(space = 8.dp),
                 ) {
                     when (page) {
-                        AddWorkoutPage.ADD_EXERCISES -> CreateWorkoutPageAddExercises(
-                            addExerciseButtonIsEnabled = addExerciseButtonIsEnabled,
-                            nameExercise = nameExercise,
+                        AddWorkoutPage.ADD_INTERVAL -> CreateWorkoutPageAddIntervals(
+                            addIntervalButtonIsEnabled = addIntervalButtonIsEnabled,
+                            intervals = intervals,
+                            nameInterval = nameInterval,
                             secondsDuration = secondsDuration,
                             secondsRest = secondsRest,
-                            onClickedAddExercise = onClickedAddExercise,
-                            onDurationChanged = onDurationChanged,
-                            onRestChanged = onRestChanged,
-                            onExerciseNameChanged = onExerciseNameChanged,
+                            onClickedAddInterval = onClickedAddInterval,
+                            onClickedRemoveInterval = onClickedRemoveInterval,
+                            onIntervalDurationChanged = onIntervalDurationChanged,
+                            onIntervalRestChanged = onIntervalRestChanged,
+                            onIntervalNameChanged = onIntervalNameChanged,
                         )
 
                         AddWorkoutPage.NAME_WORKOUT -> CreateWorkoutPageNameWorkout(
@@ -190,7 +228,8 @@ private fun CreateWorkoutScreenContent(
                         )
 
                         AddWorkoutPage.SELECT_REPS -> CreateWorkoutPageRepetitions(
-                            numberOfReps = repetitions,
+                            enabledWorkoutDecreaseRepetitions = enabledWorkoutDecreaseRepetitions,
+                                    numberOfReps = workoutRepetitions,
                             onRepetitionsDecreased = onRepetitionsDecreased,
                             onRepetitionsIncreased = onRepetitionsIncreased,
                         )
@@ -203,28 +242,30 @@ private fun CreateWorkoutScreenContent(
 
 //region Pages
 @Composable
-private fun ColumnScope.CreateWorkoutPageAddExercises(
-    nameExercise: String,
+private fun ColumnScope.CreateWorkoutPageAddIntervals(
+    addIntervalButtonIsEnabled: Boolean,
+    intervals: List<Interval>,
+    nameInterval: String,
     secondsDuration: Int,
     secondsRest: Int,
-    addExerciseButtonIsEnabled: Boolean,
-    onClickedAddExercise: () -> Unit,
-    onDurationChanged: (String) -> Unit,
-    onRestChanged: (String) -> Unit,
-    onExerciseNameChanged: (String) -> Unit,
+    onClickedAddInterval: () -> Unit,
+    onClickedRemoveInterval: (Int) -> Unit,
+    onIntervalDurationChanged: (String) -> Unit,
+    onIntervalRestChanged: (String) -> Unit,
+    onIntervalNameChanged: (String) -> Unit,
 ) {
     Text(
-        text = "Add Exercises",
+        text = "Add Interval",
         style = MaterialTheme.typography.titleLarge,
     )
 
     TextField(
-        value = nameExercise,
+        value = nameInterval,
         maxLines = 1,
-        onValueChange = onExerciseNameChanged,
+        onValueChange = onIntervalNameChanged,
         modifier = Modifier.fillMaxWidth(),
         label = {
-            Text(text = "Exercise Name")
+            Text(text = "Interval Name")
         },
     )
 
@@ -237,7 +278,7 @@ private fun ColumnScope.CreateWorkoutPageAddExercises(
                 Text(text = "Duration")
             },
             value = secondsDuration.toString(),
-            onValueChange = onDurationChanged,
+            onValueChange = { onIntervalDurationChanged(it) } ,
             modifier = Modifier.weight(weight = 1F),
             suffix = {
                 Text(text = "s")
@@ -250,7 +291,7 @@ private fun ColumnScope.CreateWorkoutPageAddExercises(
                 Text(text = "Rest")
             },
             value = secondsRest.toString(),
-            onValueChange = onRestChanged,
+            onValueChange = { onIntervalRestChanged(it) },
             modifier = Modifier.weight(weight = 1F),
             suffix = {
                 Text(text = "s")
@@ -259,22 +300,38 @@ private fun ColumnScope.CreateWorkoutPageAddExercises(
     }
 
     OutlinedButton(
-        enabled = addExerciseButtonIsEnabled,
+        enabled = addIntervalButtonIsEnabled,
         modifier = Modifier.fillMaxWidth(),
-        onClick = onClickedAddExercise,
+        onClick = onClickedAddInterval,
     ) {
         Text(
-            text = "Add Exercise to Workout",
+            text = "Add Interval to Workout",
         )
     }
 
     TableCard(
-        header = "Exercises in Workout",
+        header = "Intervals in Workout",
         modifier = Modifier
             .fillMaxWidth()
             .weight(weight = 1F),
         content = {
-
+            LazyColumn {
+                itemsIndexed(intervals) { index, interval ->
+                    RowClickable(
+                        entryNo = index + 1,
+                        text = interval.name,
+                        onClickedRemove = {
+                            onClickedRemoveInterval(index)
+                        },
+                        onClickedRow = null,
+                        showDivider = index != intervals.lastIndex,
+                        lines = listOf(
+                            "Duration: ${interval.duration} s",
+                            "Rest: ${interval.rest} s",
+                        )
+                    )
+                }
+            }
         },
     )
 }
@@ -302,6 +359,7 @@ private fun ColumnScope.CreateWorkoutPageNameWorkout(
 
 @Composable
 private fun ColumnScope.CreateWorkoutPageRepetitions(
+    enabledWorkoutDecreaseRepetitions: Boolean,
     numberOfReps: Int,
     onRepetitionsDecreased: () -> Unit,
     onRepetitionsIncreased: () -> Unit,
@@ -310,6 +368,38 @@ private fun ColumnScope.CreateWorkoutPageRepetitions(
         text = "Choose Number of Repetitions",
         style = MaterialTheme.typography.titleLarge,
     )
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(
+            onClick = onRepetitionsDecreased,
+            content = {
+                Icon(
+                    contentDescription = "Decrease repetitions",
+                    imageVector = Icons.Default.Remove,
+                )
+            },
+            enabled = enabledWorkoutDecreaseRepetitions,
+        )
+
+        Text(
+            text = numberOfReps.toString(),
+        )
+
+        IconButton(
+            onClick = onRepetitionsIncreased,
+            content = {
+                Icon(
+                    contentDescription = "Increase repetitions",
+                    imageVector = Icons.Default.Add,
+                )
+            }
+        )
+    }
 }
 //endregion Pages
 
@@ -321,22 +411,25 @@ private fun CreateWorkoutScreenContent_Preview(
 ) {
     HiitAppTheme {
         CreateWorkoutScreenContent(
-            addExerciseButtonIsEnabled = false,
+            addIntervalButtonIsEnabled = false,
             bottomBarButtonIsEnabled = true,
-            nameExercise = "",
+            intervals = emptyList(),
+            nameInterval = "",
             nameWorkout = "",
-            repetitions = 1,
+            workoutRepetitions = 1,
             page = page,
             secondsDuration = 0,
             secondsRest = 0,
-            onExerciseNameChanged = {},
-            onDurationChanged = {},
+            onIntervalNameChanged = {},
+            onIntervalDurationChanged = {},
+            onIntervalRestChanged = {},
             onRepetitionsDecreased = {},
             onRepetitionsIncreased = {},
-            onRestChanged = {},
             onClickedBottomBarButton = {},
+            onClickedRemoveInterval = {},
             onClickedNavigateUp = {},
-            onClickedAddExercise = {},
+            onClickedAddInterval = {},
+            enabledWorkoutDecreaseRepetitions = false,
             onWorkoutNameChanged = {},
         )
     }
