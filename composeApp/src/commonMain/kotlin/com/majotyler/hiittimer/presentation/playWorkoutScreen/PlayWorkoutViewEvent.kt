@@ -9,5 +9,4 @@ sealed interface PlayWorkoutViewEvent {
 
     /** The user has clicked a button to stop the timer. */
     data object ClickedPause : PlayWorkoutViewEvent
-    data object Enabled : PlayWorkoutViewEvent
 }
