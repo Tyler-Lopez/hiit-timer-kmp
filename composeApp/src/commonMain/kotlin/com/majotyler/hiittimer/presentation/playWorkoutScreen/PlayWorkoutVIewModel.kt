@@ -2,6 +2,9 @@ package com.majotyler.hiittimer.presentation.playWorkoutScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutDestination
+import com.majotyler.hiittimer.presentation.common.navigation.Destination
+import com.majotyler.hiittimer.presentation.common.navigation.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,9 +15,10 @@ import kotlinx.coroutines.launch
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
-class PlayWorkoutVIewModel : ViewModel() {
+class PlayWorkoutVIewModel(private val router: Router<PlayWorkoutDestination>) : ViewModel() {
     private val _state = MutableStateFlow(
         value = PlayWorkoutViewState(
+            confirmationDialogVisible = false,
             progressDisplay = formatMs(ms = 0L),
             progress = 0F,
         )
@@ -43,9 +47,26 @@ class PlayWorkoutVIewModel : ViewModel() {
 
     fun onEvent(event: PlayWorkoutViewEvent) {
         when (event) {
+            is PlayWorkoutViewEvent.ClickedDialogCancel -> onClickedDialogCancel()
+            is PlayWorkoutViewEvent.ClickedDialogConfirm -> onClickedDialogConfirm()
             is PlayWorkoutViewEvent.ClickedPlay -> onClickedPlay()
             is PlayWorkoutViewEvent.ClickedPause -> onClickedPause()
+            is PlayWorkoutViewEvent.ClickedSystemBack -> onClickedSystemBack()
         }
+    }
+
+    private fun onClickedDialogCancel() {
+        _state.update {
+            it.copy(confirmationDialogVisible = false)
+        }
+    }
+
+    private fun onClickedDialogConfirm() {
+        _state.update {
+            it.copy(confirmationDialogVisible = false)
+        }
+
+        router.routeTo(destination = PlayWorkoutDestination.NavigateUp)
     }
 
     private fun onClickedPlay() {
@@ -68,13 +89,17 @@ class PlayWorkoutVIewModel : ViewModel() {
     }
 
     private fun onClickedPause() {
-        updateStateWithAccumulatedTime()
-        runningMark = null
-        pollProgressJob?.cancel()
+        pauseWorkout()
+    }
 
-        _play.value = false
-        _text.value = "Start"
+    private fun onClickedSystemBack() {
+        pauseWorkout()
 
+        _state.update {
+            it.copy(
+                confirmationDialogVisible = true,
+            )
+        }
     }
 
     private fun formatMs(ms: Long): String {
@@ -85,6 +110,15 @@ class PlayWorkoutVIewModel : ViewModel() {
         return minutes.toString().padStart(2, '0') +
                 ":${seconds.toString().padStart(2, '0')}" +
                 ":${centiseconds.toString().padStart(2, '0')}"
+    }
+
+    private fun pauseWorkout() {
+        updateStateWithAccumulatedTime()
+        runningMark = null
+        pollProgressJob?.cancel()
+
+        _play.value = false
+        _text.value = "Start"
     }
 
     private fun updateStateWithAccumulatedTime() {
