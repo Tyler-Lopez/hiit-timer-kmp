@@ -8,6 +8,7 @@ package com.majotyler.hiittimer.presentation.playWorkoutScreen
  * workout.
  */
 data class PlayWorkoutViewState(
+    val confirmationDialogVisible: Boolean,
     val progressDisplay: String,
     val progress: Float,
 )

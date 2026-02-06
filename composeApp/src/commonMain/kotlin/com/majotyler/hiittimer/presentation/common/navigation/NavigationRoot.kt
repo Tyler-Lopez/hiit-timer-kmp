@@ -21,8 +21,10 @@ import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutViewModel
 import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
+import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutDestination
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutScreen
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutVIewModel
+import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutViewModelFactory
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlin.uuid.ExperimentalUuidApi
@@ -107,8 +109,9 @@ private fun HiitNavDisplay() {
                         when (destination) {
                             TimerDestination.NavigateToAddWorkout ->
                                 backStack.add(element = Route.AddWorkout)
-                            TimerDestination.NavigateToPlayWorkout->
-                                backStack.add(Route.PlayWorkout)
+
+                            TimerDestination.NavigateToPlayWorkout ->
+                                backStack.add(element = Route.PlayWorkout)
                         }
                     }
                 )
@@ -129,8 +132,20 @@ private fun HiitNavDisplay() {
             }
 
             entry<Route.PlayWorkout> {
-                val viewModel: PlayWorkoutVIewModel = viewModel()
-                PlayWorkoutScreen(viewModel)
+                val viewModelFactory = PlayWorkoutViewModelFactory(
+                    router = { destination ->
+                        when (destination) {
+                            PlayWorkoutDestination.NavigateUp -> backStack.removeLast()
+                        }
+                    }
+                )
+
+                PlayWorkoutScreen(
+                    viewModel = viewModel(
+                        factory = viewModelFactory,
+                        key = Uuid.random().toString(),
+                    ),
+                )
             }
         }
     )
