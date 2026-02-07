@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.RowClickable
 import com.majotyler.hiittimer.presentation.common.TableCard
 import com.majotyler.hiittimer.presentation.common.navigation.Destination
@@ -44,5 +45,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 sealed interface TimerDestination : Destination {
     data object NavigateToAddWorkout : TimerDestination
-    data object NavigateToPlayWorkout: TimerDestination
+    data class NavigateToPlayWorkout(
+        val workouts: List<Workout>,
+    ) : TimerDestination
 }
