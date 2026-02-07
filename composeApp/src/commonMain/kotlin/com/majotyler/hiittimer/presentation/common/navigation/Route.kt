@@ -1,6 +1,7 @@
 package com.majotyler.hiittimer.presentation.common.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.majotyler.hiittimer.domain.model.Workout
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,5 +22,7 @@ sealed interface Route : NavKey {
     data object Timer : Route
 
     @Serializable
-    data object PlayWorkout: Route
+    data class PlayWorkout(
+        val workouts: List<Workout>,
+    ) : Route
 }

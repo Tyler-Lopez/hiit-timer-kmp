@@ -107,11 +107,14 @@ private fun HiitNavDisplay() {
                 val viewModelFactory = TimerViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            TimerDestination.NavigateToAddWorkout ->
+                            is TimerDestination.NavigateToAddWorkout ->
                                 backStack.add(element = Route.AddWorkout)
 
-                            TimerDestination.NavigateToPlayWorkout ->
-                                backStack.add(element = Route.PlayWorkout)
+                            is TimerDestination.NavigateToPlayWorkout -> {
+                                backStack.add(
+                                    element = Route.PlayWorkout(workouts = destination.workouts),
+                                )
+                            }
                         }
                     }
                 )
@@ -131,13 +134,14 @@ private fun HiitNavDisplay() {
                 )
             }
 
-            entry<Route.PlayWorkout> {
+            entry<Route.PlayWorkout> { route ->
                 val viewModelFactory = PlayWorkoutViewModelFactory(
                     router = { destination ->
                         when (destination) {
                             PlayWorkoutDestination.NavigateUp -> backStack.removeLast()
                         }
-                    }
+                    },
+                    workouts = route.workouts,
                 )
 
                 PlayWorkoutScreen(

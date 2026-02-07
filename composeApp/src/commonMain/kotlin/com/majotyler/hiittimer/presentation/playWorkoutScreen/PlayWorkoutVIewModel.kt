@@ -2,8 +2,8 @@ package com.majotyler.hiittimer.presentation.playWorkoutScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutDestination
-import com.majotyler.hiittimer.presentation.common.navigation.Destination
+import com.majotyler.hiittimer.domain.model.Interval
+import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.navigation.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,7 +15,10 @@ import kotlinx.coroutines.launch
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
-class PlayWorkoutVIewModel(private val router: Router<PlayWorkoutDestination>) : ViewModel() {
+class PlayWorkoutVIewModel(
+    private val router: Router<PlayWorkoutDestination>,
+    private val workouts: List<Workout>,
+) : ViewModel() {
     private val _state = MutableStateFlow(
         value = PlayWorkoutViewState(
             confirmationDialogVisible = false,
@@ -35,15 +38,30 @@ class PlayWorkoutVIewModel(private val router: Router<PlayWorkoutDestination>) :
     val enabled = _enabled.asStateFlow()
 
     private var currentStepProgressMs: Long = 0L
-    private var currentStepTotalMs: Long = 0L
+    private val currentStepTotalMs: Long
+        get() = currentWorkoutInterval
+            ?.run {
+                val seconds = when (currentWorkoutIntervalState) {
+                    PlayWorkoutStateOfInterval.EXERCISING -> duration
+                    PlayWorkoutStateOfInterval.RESTING -> rest
+                }
+                val milliseconds = seconds * MILLISECONDS_IN_SECOND
+                milliseconds
+            } ?: 0L
+
+    /** The index of the current [Workout] in [workouts]. */
+    private var currentWorkoutIndex: Int = 0
+    private val currentWorkout: Workout?
+        get() = workouts.getOrNull(index = currentWorkoutIndex)
+
+    /** The index of the current [Interval] of [currentWorkout] */
+    private var currentWorkoutIntervalIndex: Int = 0
+    private var currentWorkoutIntervalState = PlayWorkoutStateOfInterval.EXERCISING
+    private val currentWorkoutInterval: Interval?
+        get() = currentWorkout?.intervals?.getOrNull(index = currentWorkoutIntervalIndex)
 
     private var pollProgressJob: Job? = null
     private var runningMark: TimeMark? = null
-
-    init {
-        // TODO: Replace with real step length
-        currentStepTotalMs = 10_000L
-    }
 
     fun onEvent(event: PlayWorkoutViewEvent) {
         when (event) {
