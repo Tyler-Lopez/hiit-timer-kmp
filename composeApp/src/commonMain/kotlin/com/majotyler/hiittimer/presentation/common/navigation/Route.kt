@@ -16,10 +16,10 @@ sealed interface Route : NavKey {
     data object AddWorkout : Route
 
     @Serializable
-    data object Home : Route
+    data object BuildWorkouts : Route
 
     @Serializable
-    data object Timer : Route
+    data object Home : Route
 
     @Serializable
     data class PlayWorkout(

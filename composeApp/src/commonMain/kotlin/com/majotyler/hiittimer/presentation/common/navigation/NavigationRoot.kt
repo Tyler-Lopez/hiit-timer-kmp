@@ -10,20 +10,19 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
-import com.majotyler.hiittimer.presentation.TimerDestination
-import com.majotyler.hiittimer.presentation.TimerScreen
-import com.majotyler.hiittimer.presentation.TimerViewEvent
-import com.majotyler.hiittimer.presentation.TimerViewModel
-import com.majotyler.hiittimer.presentation.TimerViewModelFactory
+import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsDestination
+import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsViewEvent
+import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsViewModel
+import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsViewModelFactory
 import com.majotyler.hiittimer.presentation.addWorkoutScreen.CreateWorkoutScreen
 import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutDestination
 import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutViewModelFactory
+import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutDestination
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutScreen
-import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutVIewModel
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutViewModelFactory
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -56,8 +55,8 @@ private fun HiitNavDisplay() {
                         serializer = Route.Home.serializer(),
                     )
                     subclass(
-                        subclass = Route.Timer::class,
-                        serializer = Route.Timer.serializer(),
+                        subclass = Route.BuildWorkouts::class,
+                        serializer = Route.BuildWorkouts.serializer(),
                     )
                 }
             }
@@ -92,8 +91,8 @@ private fun HiitNavDisplay() {
                 val viewModelFactory = HomeViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            HomeDestination.NavigateToTimer -> {
-                                backStack.add(element = Route.Timer)
+                            HomeDestination.NavigateToBuildWorkouts -> {
+                                backStack.add(element = Route.BuildWorkouts)
                             }
                         }
                     }
@@ -103,14 +102,14 @@ private fun HiitNavDisplay() {
                     viewModel = viewModel(factory = viewModelFactory),
                 )
             }
-            entry<Route.Timer> {
-                val viewModelFactory = TimerViewModelFactory(
+            entry<Route.BuildWorkouts> {
+                val viewModelFactory = BuildWorkoutsViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            is TimerDestination.NavigateToAddWorkout ->
+                            is BuildWorkoutsDestination.NavigateToAddWorkout ->
                                 backStack.add(element = Route.AddWorkout)
 
-                            is TimerDestination.NavigateToPlayWorkout -> {
+                            is BuildWorkoutsDestination.NavigateToPlayWorkout -> {
                                 backStack.add(
                                     element = Route.PlayWorkout(workouts = destination.workouts),
                                 )
@@ -119,17 +118,17 @@ private fun HiitNavDisplay() {
                     }
                 )
 
-                val viewModel: TimerViewModel = viewModel<TimerViewModel>(
+                val viewModel: BuildWorkoutsViewModel = viewModel<BuildWorkoutsViewModel>(
                     factory = viewModelFactory,
                 )
 
                 ResultEffect<Workout>(resultBus) { workout ->
                     viewModel.onEvent(
-                        event = TimerViewEvent.AddedWorkout(workout = workout)
+                        event = BuildWorkoutsViewEvent.AddedWorkout(workout = workout)
                     )
                 }
 
-                TimerScreen(
+                BuildWorkoutsScreen(
                     viewModel = viewModel(factory = viewModelFactory),
                 )
             }

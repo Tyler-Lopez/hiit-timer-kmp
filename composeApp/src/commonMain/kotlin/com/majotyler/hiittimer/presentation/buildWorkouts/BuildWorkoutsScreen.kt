@@ -1,4 +1,4 @@
-package com.majotyler.hiittimer.presentation
+package com.majotyler.hiittimer.presentation.buildWorkouts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,63 +40,61 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview(showBackground = true)
 @Composable
-fun TimerScreenPreview() {
-    val viewModel = TimerViewModel(
+fun BuildWorkoutsScreen_Preview() {
+    val viewModel = BuildWorkoutsViewModel(
         router = {},
     )
 
-    TimerScreen(viewModel = viewModel)
+    BuildWorkoutsScreen(viewModel = viewModel)
 }
 
 
 @Composable
-fun TimerScreen(viewModel: TimerViewModel) {
-    val enabled by viewModel.enabled.collectAsStateWithLifecycle()
-    val loading by viewModel.loading.collectAsStateWithLifecycle()
-    val list by viewModel.workouts.collectAsStateWithLifecycle()
+fun BuildWorkoutsScreen(viewModel: BuildWorkoutsViewModel) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (loading) {
-        Box(Modifier.fillMaxSize()) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
-        }
-    } else {
-        Column(
+    Column(
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
+            .fillMaxSize()
+            .safeDrawingPadding()
+            .padding(horizontal = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(space = 4.dp),
+    ) {
+        Row(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.background)
-                .fillMaxSize()
-                .safeDrawingPadding()
-                .padding(horizontal = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(space = 4.dp),
+                .fillMaxWidth()
+                .weight(weight = 1F),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
         ) {
-            Row(
+            Workouts(
+                list = state.workouts,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(weight = 1F),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
-            ) {
-                Workouts(
-                    list = list,
-                    modifier = Modifier
-                        .weight(weight = 1F)
-                        .fillMaxHeight(),
-                    onClickedAdd = { viewModel.onEvent(event = TimerViewEvent.ClickedAddWorkout) },
-                    onDelete = {
-                        viewModel.onEvent(event = TimerViewEvent.ClickedDeleteWorkout(index = it))
-                    },
-                )
-            }
-            StartButton{viewModel.onEvent(TimerViewEvent.ClickedGo)}
+                    .weight(weight = 1F)
+                    .fillMaxHeight(),
+                onClickedAdd = { viewModel.onEvent(event = BuildWorkoutsViewEvent.ClickedAddWorkout) },
+                onDelete = {
+                    viewModel.onEvent(event = BuildWorkoutsViewEvent.ClickedDeleteWorkout(index = it))
+                },
+            )
         }
+        StartButton(
+            enabled = state.enabledButtonPlayWorkouts,
+        ) { viewModel.onEvent(BuildWorkoutsViewEvent.ClickedGo) }
     }
 }
 
 @Composable
-fun StartButton(onClickedGo: () -> Unit) {
+fun StartButton(
+    enabled: Boolean,
+    onClickedGo: () -> Unit,
+) {
     Button(
+        enabled = enabled,
         shape = RoundedCornerShape(size = 12.dp),
         modifier = Modifier.fillMaxWidth(),
-        onClick = {onClickedGo()},
+        onClick = { onClickedGo() },
     ) {
         Text(
             text = "Go",
