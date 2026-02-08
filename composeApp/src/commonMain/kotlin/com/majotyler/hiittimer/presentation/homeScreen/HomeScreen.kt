@@ -22,10 +22,10 @@ fun HomeScreen(
     ) {
         Button(
             onClick = {
-                viewModel.onEvent(event = HomeViewEvent.ClickedLaunchTimer)
+                viewModel.onEvent(event = HomeViewEvent.ClickedLaunchBuildWorkouts)
             },
         ) {
-            Text(text = "Launch TimerScreen")
+            Text(text = "Launch BuildWorkoutsScreen")
         }
     }
 }

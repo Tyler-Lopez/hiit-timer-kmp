@@ -9,11 +9,11 @@ class HomeViewModel(
 
     fun onEvent(event: HomeViewEvent) {
         when (event) {
-            is HomeViewEvent.ClickedLaunchTimer -> onClickedLaunchTimer()
+            is HomeViewEvent.ClickedLaunchBuildWorkouts -> onClickedLaunchBuildWorkouts()
         }
     }
 
-    private fun onClickedLaunchTimer() {
-        router.routeTo(destination = HomeDestination.NavigateToTimer)
+    private fun onClickedLaunchBuildWorkouts() {
+        router.routeTo(destination = HomeDestination.NavigateToBuildWorkouts)
     }
 }
