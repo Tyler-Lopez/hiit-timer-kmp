@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 NavigationRoot(
                     urlOpener = AndroidUrlOpener(context = this),
+                    stravaAccessToken = accessToken,
                 )
             }
         }

@@ -1,0 +1,18 @@
+package com.majotyler.hiittimer.data.dto
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class StravaAuthenticationDto(
+    @SerialName("token_type")
+    val tokenType: String,
+    @SerialName("expires_at")
+    val expiresAt: Long,
+    @SerialName("expires_in")
+    val expiresIn: Int,
+    @SerialName("refresh_token")
+    val refreshToken: String,
+    @SerialName("access_token")
+    val accessToken: String,
+)

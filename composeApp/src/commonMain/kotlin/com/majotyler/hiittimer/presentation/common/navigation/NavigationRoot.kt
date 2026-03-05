@@ -33,10 +33,12 @@ import kotlin.uuid.Uuid
 @Composable
 fun NavigationRoot(
     urlOpener: UrlOpener,
+    stravaAccessToken: String?,
 ) {
     HiitAppTheme {
         HiitNavDisplay(
             urlOpener = urlOpener,
+            stravaAccessToken = stravaAccessToken,
         )
     }
 }
@@ -45,6 +47,7 @@ fun NavigationRoot(
 @Composable
 private fun HiitNavDisplay(
     urlOpener: UrlOpener,
+    stravaAccessToken: String?,
 ) {
 
     val resultBus = remember { ResultEventBus() }
@@ -102,7 +105,8 @@ private fun HiitNavDisplay(
                                 backStack.add(element = Route.BuildWorkouts)
                             }
                         }
-                    }
+                    },
+                    stravaAccessToken = stravaAccessToken,
                 )
 
                 HomeScreen(
