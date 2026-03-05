@@ -44,5 +44,15 @@ fun HomeScreen(
         ) {
             Text(text = "Connect with Strava")
         }
+
+        if (viewModel.showCreateActivityButton) {
+            Button(
+                onClick = {
+                    viewModel.onEvent(event = HomeViewEvent.ClickedCreateStravaActivity)
+                }
+            ) {
+                Text(text = "Create Strava Activity")
+            }
+        }
     }
 }

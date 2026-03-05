@@ -1,9 +1,12 @@
 package com.majotyler.hiittimer.presentation.homeScreen
 
-import androidx.compose.ui.text.input.KeyboardType.Companion.Uri
 import androidx.lifecycle.ViewModel
 import io.ktor.http.*
 import androidx.lifecycle.viewModelScope
+import com.majotyler.hiittimer.data.api.StravaApi
+import com.majotyler.hiittimer.data.repository.StravaRepository
+import com.majotyler.hiittimer.domain.usecase.CreateStravaActivityUseCase
+import com.majotyler.hiittimer.network.HttpClientFactory
 import com.majotyler.hiittimer.presentation.common.navigation.Router
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -11,21 +14,51 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val router: Router<HomeDestination>,
+    private val stravaAccessCode: String?,
 ) : ViewModel() {
 
     private val _openUrl = MutableSharedFlow<String>()
     val openUrl = _openUrl.asSharedFlow()
 
+    // TODO This is temporary to show something to create a Strava Activity
+    val showCreateActivityButton = stravaAccessCode != null
+
+    private val httpClient by lazy {
+        HttpClientFactory.create()
+    }
+
+    private val stravaApi: StravaApi by lazy {
+        StravaApi(httpClient)
+    }
+
+    private val stravaRepository by lazy {
+        StravaRepository(stravaApi)
+    }
+    private val createStravaActivityUseCase by lazy {
+        CreateStravaActivityUseCase(
+            stravaAccessCode = stravaAccessCode ?: "",
+            repository = stravaRepository,
+        )
+    }
+
     fun onEvent(event: HomeViewEvent) {
         when (event) {
             is HomeViewEvent.ClickedConnectWithStrava -> onClickedConnectWithStrava()
+            is HomeViewEvent.ClickedCreateStravaActivity -> onClickedCreateStravaActivity()
             is HomeViewEvent.ClickedLaunchBuildWorkouts -> onClickedLaunchBuildWorkouts()
         }
     }
 
     private fun onClickedConnectWithStrava() {
+
         viewModelScope.launch {
             _openUrl.emit(value = getAuthUri())
+        }
+    }
+
+    private fun onClickedCreateStravaActivity() {
+        viewModelScope.launch {
+            createStravaActivityUseCase()
         }
     }
 
