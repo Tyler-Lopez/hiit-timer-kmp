@@ -44,6 +44,8 @@ kotlin {
 
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
+
+            implementation("io.ktor:ktor-http:3.4.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

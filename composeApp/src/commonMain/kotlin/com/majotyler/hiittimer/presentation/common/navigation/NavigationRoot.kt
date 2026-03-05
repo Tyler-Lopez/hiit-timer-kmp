@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.majotyler.hiittimer.domain.model.Workout
+import com.majotyler.hiittimer.platform.UrlOpener
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsDestination
 import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsViewEvent
@@ -30,15 +31,21 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Composable
-fun NavigationRoot() {
+fun NavigationRoot(
+    urlOpener: UrlOpener,
+) {
     HiitAppTheme {
-        HiitNavDisplay()
+        HiitNavDisplay(
+            urlOpener = urlOpener,
+        )
     }
 }
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-private fun HiitNavDisplay() {
+private fun HiitNavDisplay(
+    urlOpener: UrlOpener,
+) {
 
     val resultBus = remember { ResultEventBus() }
 
@@ -99,6 +106,7 @@ private fun HiitNavDisplay() {
                 )
 
                 HomeScreen(
+                    urlOpener = urlOpener,
                     viewModel = viewModel(factory = viewModelFactory),
                 )
             }
