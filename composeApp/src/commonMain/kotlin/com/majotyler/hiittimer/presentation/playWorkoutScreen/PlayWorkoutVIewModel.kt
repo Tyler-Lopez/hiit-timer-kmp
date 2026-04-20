@@ -156,15 +156,45 @@ class PlayWorkoutVIewModel(
                     runningMark = TimeSource.Monotonic.markNow()
 
                     val hasReachedEndOfCurrentStep: Boolean = newState.progress >= 1F
+
                     if (hasReachedEndOfCurrentStep) {
-                        _play.value = false
-                        _text.value = "Start"
-                        _enabled.value = false
-                        pollProgressJob?.cancel()
+                        val lastIndexOfIntervalsInCurrentWorkout =
+                            currentWorkout?.intervals?.lastIndex
+                        val isResting =
+                            currentWorkoutIntervalState == PlayWorkoutStateOfInterval.RESTING
+                        val currentIntervalIsLastInWorkout =
+                            currentWorkoutIntervalIndex == lastIndexOfIntervalsInCurrentWorkout
+                        val hasFinishedAllWorkouts = isResting && currentIntervalIsLastInWorkout
+
+                        if (hasFinishedAllWorkouts) {
+                            _play.value = false
+                            _text.value = "Start"
+                            _enabled.value = false
+                            pollProgressJob?.cancel()
+
+                        } else {
+                            nextStep()
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun nextStep() {
+        when (currentWorkoutIntervalState) {
+            PlayWorkoutStateOfInterval.EXERCISING -> {
+                currentWorkoutIntervalState =
+                    PlayWorkoutStateOfInterval.RESTING
+            }
+
+            PlayWorkoutStateOfInterval.RESTING -> {
+                currentWorkoutIntervalIndex++
+                currentWorkoutIntervalState =
+                    PlayWorkoutStateOfInterval.EXERCISING
+            }
+        }
+        currentStepProgressMs = 0L
     }
 
     companion object {
