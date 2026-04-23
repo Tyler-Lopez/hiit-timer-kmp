@@ -31,8 +31,8 @@ class PlayWorkoutVIewModel(
     private val _play = MutableStateFlow(false)
 
     val play = _play.asStateFlow()
-    private val _text = MutableStateFlow("Start")
-    val text = _text.asStateFlow()
+    private val _workoutPlayState = MutableStateFlow(value = WorkoutPlayState.PAUSED)
+    val workoutPlayState = _workoutPlayState.asStateFlow()
 
     private val _enabled = MutableStateFlow(true)
     val enabled = _enabled.asStateFlow()
@@ -89,7 +89,7 @@ class PlayWorkoutVIewModel(
 
     private fun onClickedPlay() {
         _play.value = !_play.value
-        _text.value = if (_play.value) "Stop" else "Start"
+        _workoutPlayState.value = if (_play.value) WorkoutPlayState.PLAYING else WorkoutPlayState.PAUSED
 
         if (_play.value) {
             if (runningMark == null) {
@@ -136,7 +136,7 @@ class PlayWorkoutVIewModel(
         pollProgressJob?.cancel()
 
         _play.value = false
-        _text.value = "Start"
+        _workoutPlayState.value = WorkoutPlayState.PAUSED
     }
 
     private fun updateStateWithAccumulatedTime() {
@@ -168,7 +168,7 @@ class PlayWorkoutVIewModel(
 
                         if (hasFinishedAllWorkouts) {
                             _play.value = false
-                            _text.value = "Start"
+                            _workoutPlayState.value = WorkoutPlayState.PAUSED
                             _enabled.value = false
                             pollProgressJob?.cancel()
 

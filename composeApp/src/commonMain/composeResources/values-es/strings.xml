@@ -17,8 +17,31 @@
     <string name="add_workout_toolbar_title">Agregar entrenamiento</string>
     <!--endregion Add Workout -->
 
+    <!--region Build Workouts -->
+    <string name="build_workouts_button_label_add_workout">[Add Workout]</string>
+    <string name="build_workouts_button_label_go">[Go]</string>
+    <string name="build_workouts_card_header_workouts">[Workouts]</string>
+    <!--endregion Build Workouts -->
+
+    <!--region Confirmation Dialog -->
+    <string name="confirmation_dialog_button_label_cancel">[Cancel]</string>
+    <string name="confirmation_dialog_button_label_confirm">[Confirm]</string>
+    <!--endregion Confirmation Dialog -->
+
+    <!--region Home -->
+    <string name="home_button_label_connect_with_strava">[Connect with Strava]</string>
+    <string name="home_button_label_launch_build_workouts">[Launch BuildWorkoutsScreen]</string>
+    <!--endregion Home -->
+
+    <!--region Play Workout -->
+    <string name="play_workout_button_label_start">[Start]</string>
+    <string name="play_workout_button_label_stop">[Stop]</string>
+    <string name="play_workout_confirmation_stop">[Are you sure you want to stop your workout?]</string>
+    <!--endregion Play Workout -->
+
     <!--region Shared -->
     <string name="content_description_navigate_up">Regresar</string>
+    <string name="content_description_remove">[Remove]</string>
     <plurals name="seconds_long">
         <item quantity="one">%1$d segundo</item>
         <item quantity="other">%1$d segundos</item>
@@ -27,6 +50,6 @@
     <string name="seconds_short_label">s</string>
 
     <string name="interval_duration_label">Duración %1$s</string>
-    <string name="interval_rest_label">Descanso %s</string>
+    <string name="interval_rest_label">Descanso %1$s</string>
     <!--endregion Shared -->
 </resources>

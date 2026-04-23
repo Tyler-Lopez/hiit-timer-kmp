@@ -5,6 +5,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
+import hiittimer.composeapp.generated.resources.Res
+import hiittimer.composeapp.generated.resources.confirmation_dialog_button_label_cancel
+import hiittimer.composeapp.generated.resources.confirmation_dialog_button_label_confirm
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -21,7 +25,7 @@ fun ConfirmationDialog(
                 onClick = onClickPositive,
             ) {
                 Text(
-                    text = "Confirm",
+                    text = stringResource(resource = Res.string.confirmation_dialog_button_label_confirm),
                 )
             }
         },
@@ -30,7 +34,7 @@ fun ConfirmationDialog(
                 onClick = onClickNegative,
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(resource = Res.string.confirmation_dialog_button_label_cancel),
                 )
             }
         },

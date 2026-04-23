@@ -22,6 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.majotyler.hiittimer.presentation.common.composables.ConfirmationDialog
 import com.majotyler.hiittimer.presentation.common.expect.BackHandler
+import hiittimer.composeapp.generated.resources.Res
+import hiittimer.composeapp.generated.resources.play_workout_button_label_start
+import hiittimer.composeapp.generated.resources.play_workout_button_label_stop
+import hiittimer.composeapp.generated.resources.play_workout_confirmation_stop
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PlayWorkoutScreen(
@@ -29,7 +34,7 @@ fun PlayWorkoutScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val play by viewModel.play.collectAsStateWithLifecycle()
-    val text by viewModel.text.collectAsStateWithLifecycle()
+    val workoutPlayState by viewModel.workoutPlayState.collectAsStateWithLifecycle()
     val enabled by viewModel.enabled.collectAsStateWithLifecycle()
 
     BackHandler(
@@ -49,7 +54,7 @@ fun PlayWorkoutScreen(
             viewModel.onEvent(event = PlayWorkoutViewEvent.ClickedDialogConfirm)
         },
         onClickedPlay = { viewModel.onEvent(event = PlayWorkoutViewEvent.ClickedPlay) },
-        text = text,
+        workoutPlayState = workoutPlayState,
         play = play,
         onClickedPause = {
             viewModel.onEvent(
@@ -66,7 +71,7 @@ private fun PlayWorkoutContent(
     progressDisplay: String,
     progress: Float,
     onClickedPlay: () -> Unit,
-    text: String,
+    workoutPlayState: WorkoutPlayState,
     play: Boolean,
     onClickedDialogConfirm: () -> Unit,
     onClickedDialogCancel: () -> Unit,
@@ -75,7 +80,7 @@ private fun PlayWorkoutContent(
 ) {
     if (confirmationDialogVisible) {
         ConfirmationDialog(
-            text = "Are you sure you want to stop your workout?",
+            text = stringResource(resource = Res.string.play_workout_confirmation_stop),
             onClickPositive = onClickedDialogConfirm,
             onClickNegative = onClickedDialogCancel,
             onDismiss = onClickedDialogCancel,
@@ -112,6 +117,10 @@ private fun PlayWorkoutContent(
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
+        val buttonLabel = when (workoutPlayState) {
+            WorkoutPlayState.PLAYING -> stringResource(resource = Res.string.play_workout_button_label_stop)
+            WorkoutPlayState.PAUSED -> stringResource(resource = Res.string.play_workout_button_label_start)
+        }
         Button(onClick = {
             if (play) {
                 onClickedPause()
@@ -119,7 +128,7 @@ private fun PlayWorkoutContent(
                 onClickedPlay()
             }
         }, enabled = enabled) {
-            Text(text)
+            Text(text = buttonLabel)
         }
 
 
