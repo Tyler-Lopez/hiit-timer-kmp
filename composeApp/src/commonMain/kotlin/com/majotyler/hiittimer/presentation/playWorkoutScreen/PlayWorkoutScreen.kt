@@ -18,10 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.majotyler.hiittimer.presentation.common.composables.ConfirmationDialog
 import com.majotyler.hiittimer.presentation.common.expect.BackHandler
+
+private val RestYellow = Color(0xFFFFCC00)
 
 @Composable
 fun PlayWorkoutScreen(
@@ -40,6 +43,10 @@ fun PlayWorkoutScreen(
 
     PlayWorkoutContent(
         confirmationDialogVisible = state.confirmationDialogVisible,
+        intervalName = state.intervalName,
+        intervalNumber = state.intervalNumber,
+        intervalTotal = state.intervalTotal,
+        isResting = state.isResting,
         progressDisplay = state.progressDisplay,
         progress = state.progress,
         onClickedDialogCancel = {
@@ -51,11 +58,7 @@ fun PlayWorkoutScreen(
         onClickedPlay = { viewModel.onEvent(event = PlayWorkoutViewEvent.ClickedPlay) },
         text = text,
         play = play,
-        onClickedPause = {
-            viewModel.onEvent(
-                PlayWorkoutViewEvent.ClickedPause
-            )
-        },
+        onClickedPause = { viewModel.onEvent(PlayWorkoutViewEvent.ClickedPause) },
         enabled = enabled,
     )
 }
@@ -63,6 +66,10 @@ fun PlayWorkoutScreen(
 @Composable
 private fun PlayWorkoutContent(
     confirmationDialogVisible: Boolean,
+    intervalName: String,
+    intervalNumber: Int,
+    intervalTotal: Int,
+    isResting: Boolean,
     progressDisplay: String,
     progress: Float,
     onClickedPlay: () -> Unit,
@@ -82,47 +89,77 @@ private fun PlayWorkoutContent(
         )
     }
 
+    val accentColor = if (isResting) RestYellow else Color.Green
+    val progressTrackColor = MaterialTheme.colorScheme.secondary
+
     Column(
-        modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
-        val progressTrackColor = MaterialTheme.colorScheme.secondary
+        Text(
+            text = if (isResting) "Rest" else "Exercise",
+            style = MaterialTheme.typography.labelLarge,
+            color = accentColor,
+            fontWeight = FontWeight.Bold,
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = intervalName,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = "Interval $intervalNumber of $intervalTotal",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         Box(
-            Modifier.size(200.dp).drawBehind {
-                drawArc(
-                    startAngle = 180F, sweepAngle = 360F, useCenter = false,
-                    style = Stroke(width = 10f), color = progressTrackColor,
-                )
-
-                drawArc(
-                    startAngle = 180F,
-                    sweepAngle = 360f * progress,
-                    useCenter = false,
-                    style = Stroke(width = 12f),
-                    color = Color.Green
-                )
-            },
-            contentAlignment = Alignment.Center
+            modifier = Modifier
+                .size(200.dp)
+                .drawBehind {
+                    drawArc(
+                        startAngle = 180F,
+                        sweepAngle = 360F,
+                        useCenter = false,
+                        style = Stroke(width = 10f),
+                        color = progressTrackColor,
+                    )
+                    drawArc(
+                        startAngle = 180F,
+                        sweepAngle = 360f * progress,
+                        useCenter = false,
+                        style = Stroke(width = 12f),
+                        color = accentColor,
+                    )
+                },
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 style = MaterialTheme.typography.titleLarge,
-                text = progressDisplay, color = MaterialTheme.colorScheme.primary
+                text = progressDisplay,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        Button(onClick = {
-            if (play) {
-                onClickedPause()
-            } else {
-                onClickedPlay()
-            }
-        }, enabled = enabled) {
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = { if (play) onClickedPause() else onClickedPlay() },
+            enabled = enabled,
+        ) {
             Text(text)
         }
-
-
     }
-
 }
