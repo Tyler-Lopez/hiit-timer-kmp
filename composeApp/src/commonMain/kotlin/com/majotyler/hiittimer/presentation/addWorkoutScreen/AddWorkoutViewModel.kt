@@ -124,8 +124,7 @@ class AddWorkoutViewModel(private val router: Router<AddWorkoutDestination>) : V
         val wasOnFirstPage = nextPageOrdinal < 0
 
         if (wasOnFirstPage) {
-            // TODO (This needs to navigate up so you go back to the previous screen, maybe with a
-            // "are you sure" type message
+            router.routeTo(destination = AddWorkoutDestination.NavigateUp)
         } else {
             _page.value = AddWorkoutPage.entries[nextPageOrdinal]
         }
