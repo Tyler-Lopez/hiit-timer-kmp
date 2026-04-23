@@ -11,6 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewModelScope
 import com.majotyler.hiittimer.platform.UrlOpener
+import hiittimer.composeapp.generated.resources.Res
+import hiittimer.composeapp.generated.resources.home_button_label_connect_with_strava
+import hiittimer.composeapp.generated.resources.home_button_label_launch_build_workouts
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreen(
@@ -35,14 +39,14 @@ fun HomeScreen(
                 viewModel.onEvent(event = HomeViewEvent.ClickedLaunchBuildWorkouts)
             },
         ) {
-            Text(text = "Launch BuildWorkoutsScreen")
+            Text(text = stringResource(resource = Res.string.home_button_label_launch_build_workouts))
         }
         Button(
             onClick = {
                 viewModel.onEvent(event = HomeViewEvent.ClickedConnectWithStrava)
             },
         ) {
-            Text(text = "Connect with Strava")
+            Text(text = stringResource(resource = Res.string.home_button_label_connect_with_strava))
         }
 
         if (viewModel.showCreateActivityButton) {
