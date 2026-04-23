@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.majotyler.hiittimer.domain.model.Interval
 import com.majotyler.hiittimer.presentation.common.RowClickable
 import com.majotyler.hiittimer.presentation.common.TableCard
+import com.majotyler.hiittimer.presentation.common.expect.BackHandler
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import hiittimer.composeapp.generated.resources.Res
 import hiittimer.composeapp.generated.resources.add_workout_add_interval_button_label_add_interval
@@ -160,6 +161,8 @@ private fun CreateWorkoutScreenContent(
     onClickedBottomBarButton: () -> Unit,
     onClickedNavigateUp: () -> Unit,
 ) {
+    BackHandler(onBack = onClickedNavigateUp)
+
     Scaffold(
         modifier = Modifier.imePadding(),
         topBar = {
