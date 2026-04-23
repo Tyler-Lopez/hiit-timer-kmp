@@ -82,6 +82,7 @@ private fun HiitNavDisplay(
                                 resultBus.sendResult<Workout>(result = destination.workout)
                                 backStack.removeLast()
                             }
+                            AddWorkoutDestination.NavigateUp -> backStack.removeLast()
                         }
                     }
                 )
