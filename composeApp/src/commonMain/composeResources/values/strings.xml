@@ -27,6 +27,6 @@
     <string name="seconds_short_label">s</string>
 
     <string name="interval_duration_label">Duration %1$s</string>
-    <string name="interval_rest_label">Rest %s</string>
+    <string name="interval_rest_label">Rest %1$s</string>
     <!--endregion Shared -->
 </resources>
