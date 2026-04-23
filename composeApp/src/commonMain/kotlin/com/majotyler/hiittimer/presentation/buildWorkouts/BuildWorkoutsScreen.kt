@@ -35,6 +35,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.presentation.common.RowClickable
 import com.majotyler.hiittimer.presentation.common.TableCard
+import hiittimer.composeapp.generated.resources.Res
+import hiittimer.composeapp.generated.resources.build_workouts_button_label_add_workout
+import hiittimer.composeapp.generated.resources.build_workouts_button_label_go
+import hiittimer.composeapp.generated.resources.build_workouts_card_header_workouts
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -97,7 +102,7 @@ fun StartButton(
         onClick = { onClickedGo() },
     ) {
         Text(
-            text = "Go",
+            text = stringResource(resource = Res.string.build_workouts_button_label_go),
             fontSize = 30.sp,
         )
     }
@@ -114,7 +119,7 @@ fun Workouts(
         modifier = modifier,
     ) {
         TableCard(
-            header = "Workouts",
+            header = stringResource(resource = Res.string.build_workouts_card_header_workouts),
             content = {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,7 +156,7 @@ fun Workouts(
                             modifier = Modifier.width(width = 2.dp),
                         )
                         Text(
-                            text = "Add Workout",
+                            text = stringResource(resource = Res.string.build_workouts_button_label_add_workout),
                             fontWeight = FontWeight.SemiBold,
                             style = MaterialTheme.typography.titleLarge,
                         )

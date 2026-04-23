@@ -1,32 +1,53 @@
 <resources>
     <!--region Add Workout -->
-    <string name="add_workout_add_interval_title">Agregar intervalo</string>
-    <string name="add_workout_add_interval_interval_name_label">Nombre del intervalo</string>
-    <string name="add_workout_add_interval_duration_label">Duración</string>
-    <string name="add_workout_add_interval_rest_label">Descanso</string>
     <string name="add_workout_add_interval_button_label_add_interval">Agregar intervalo al entrenamiento</string>
     <string name="add_workout_add_interval_button_label_advance">Siguiente</string>
+    <string name="add_workout_add_interval_duration_label">Duración</string>
+    <string name="add_workout_add_interval_interval_name_label">Nombre del intervalo</string>
+    <string name="add_workout_add_interval_rest_label">Descanso</string>
+    <string name="add_workout_add_interval_title">Agregar intervalo</string>
     <string name="add_workout_add_interval_workout_preview_title">Intervalos en el entrenamiento</string>
     <string name="add_workout_create_reps_button_label_advance">Crear y agregar entrenamiento</string>
     <string name="add_workout_create_reps_content_description_decrease_repetitions">Disminuir repeticiones</string>
     <string name="add_workout_create_reps_content_description_increase_repetitions">Aumentar repeticiones</string>
     <string name="add_workout_create_reps_title">Escoge el número de repeticiones</string>
     <string name="add_workout_name_workout_button_label_advance">Siguiente</string>
-    <string name="add_workout_name_workout_title">Nombre del entrenamiento</string>
     <string name="add_workout_name_workout_label">Nombre del entrenamiento</string>
+    <string name="add_workout_name_workout_title">Nombre del entrenamiento</string>
     <string name="add_workout_toolbar_title">Agregar entrenamiento</string>
     <!--endregion Add Workout -->
 
+    <!--region Build Workouts -->
+    <string name="build_workouts_button_label_add_workout">[Add Workout]</string>
+    <string name="build_workouts_button_label_go">[Go]</string>
+    <string name="build_workouts_card_header_workouts">[Workouts]</string>
+    <!--endregion Build Workouts -->
+
+    <!--region Confirmation Dialog -->
+    <string name="confirmation_dialog_button_label_cancel">[Cancel]</string>
+    <string name="confirmation_dialog_button_label_confirm">[Confirm]</string>
+    <!--endregion Confirmation Dialog -->
+
+    <!--region Home -->
+    <string name="home_button_label_connect_with_strava">[Connect with Strava]</string>
+    <string name="home_button_label_launch_build_workouts">[Launch BuildWorkoutsScreen]</string>
+    <!--endregion Home -->
+
+    <!--region Play Workout -->
+    <string name="play_workout_button_label_start">[Start]</string>
+    <string name="play_workout_button_label_stop">[Stop]</string>
+    <string name="play_workout_confirmation_stop">[Are you sure you want to stop your workout?]</string>
+    <!--endregion Play Workout -->
+
     <!--region Shared -->
     <string name="content_description_navigate_up">Regresar</string>
+    <string name="content_description_remove">[Remove]</string>
+    <string name="interval_duration_label">Duración %1$s</string>
+    <string name="interval_rest_label">Descanso %s</string>
     <plurals name="seconds_long">
         <item quantity="one">%1$d segundo</item>
         <item quantity="other">%1$d segundos</item>
     </plurals>
-
     <string name="seconds_short_label">s</string>
-
-    <string name="interval_duration_label">Duración %1$s</string>
-    <string name="interval_rest_label">Descanso %s</string>
     <!--endregion Shared -->
 </resources>
