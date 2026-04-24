@@ -21,6 +21,14 @@
     <string name="build_workouts_button_label_add_workout">[Add Workout]</string>
     <string name="build_workouts_button_label_go">[Go]</string>
     <string name="build_workouts_card_header_workouts">[Workouts]</string>
+    <string name="build_workouts_content_description_remove_workout">[Remove workout]</string>
+    <string name="build_workouts_interval_chip_duration">%1$ds</string>
+    <string name="build_workouts_interval_chip_rest">%1$ds descanso</string>
+    <string name="build_workouts_workout_total_duration">%1$s total</string>
+    <plurals name="build_workouts_workout_repetitions">
+        <item quantity="one">%1$d rep</item>
+        <item quantity="other">%1$d reps</item>
+    </plurals>
     <!--endregion Build Workouts -->
 
     <!--region Confirmation Dialog -->
