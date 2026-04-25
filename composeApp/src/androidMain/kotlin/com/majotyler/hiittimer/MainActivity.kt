@@ -15,16 +15,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val uri: Uri? = intent?.data
-        val accessToken: String? = uri?.getQueryParameter("code")
+        val accessCode: String? = uri?.getQueryParameter("code")
 
-        // TODO we need to use this to make a Strava Activity
-        println("Access token is $accessToken")
+        println("Strava access code: $accessCode")
 
         setContent {
             MaterialTheme {
                 NavigationRoot(
                     urlOpener = AndroidUrlOpener(context = this),
-                    stravaAccessToken = accessToken,
+                    stravaAccessCode = accessCode,
                 )
             }
         }
