@@ -24,6 +24,17 @@ class StravaApi(private val client: HttpClient) {
         return response.body()
     }
 
+    suspend fun refreshAccessTokenViaProxy(
+        refreshToken: String,
+    ): StravaAuthenticationDto {
+        val response = client.post(urlString = ProxyEndpoints.OAUTH_REFRESH) {
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("refresh_token" to refreshToken))
+        }
+        println("Proxy token refresh status: ${response.status}")
+        return response.body()
+    }
+
     suspend fun createActivity(
         accessToken: String,
         name: String,
@@ -53,5 +64,7 @@ private object StravaEndpoints {
 }
 
 private object ProxyEndpoints {
-    const val OAUTH_TOKEN = "https://strava-token-proxy.hiit-timer-app.workers.dev"
+    const val BASE_URL = "https://strava-token-proxy.hiit-timer-app.workers.dev"
+    const val OAUTH_TOKEN = BASE_URL
+    const val OAUTH_REFRESH = "$BASE_URL/refresh"
 }
