@@ -17,12 +17,16 @@ class WorkoutReviewViewModelFactory(
     private val router: (WorkoutReviewDestination) -> Unit,
     private val stravaAccessCode: String?,
     private val stravaTokenStorageRepository: StravaTokenStorageRepository,
+    private val startDateLocal: String,
+    private val elapsedTime: Int,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
         val stravaRepository = StravaRepository(api = StravaApi(client = HttpClientFactory.create()))
         return WorkoutReviewViewModel(
             router = router,
             stravaAccessCode = stravaAccessCode,
+            startDateLocal = startDateLocal,
+            elapsedTime = elapsedTime,
             getStoredStravaTokenUseCase = GetStoredStravaTokenUseCase(repository = stravaTokenStorageRepository),
             refreshStravaTokenUseCase = RefreshStravaTokenUseCase(
                 stravaRepository = stravaRepository,
