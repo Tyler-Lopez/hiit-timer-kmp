@@ -21,6 +21,7 @@ class StravaRepository(
     suspend fun createActivity(
         accessToken: String,
         name: String,
+        description: String,
         sportType: String,
         startDateLocal: String,
         elapsedTime: Int,
@@ -28,6 +29,7 @@ class StravaRepository(
         api.createActivity(
             accessToken = accessToken,
             name = name,
+            description = description,
             sportType = sportType,
             startDateLocal = startDateLocal,
             elapsedTime = elapsedTime,

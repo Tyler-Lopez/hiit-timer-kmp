@@ -31,6 +31,7 @@ fun PlayWorkoutScreen(
     val play by viewModel.play.collectAsStateWithLifecycle()
     val text by viewModel.text.collectAsStateWithLifecycle()
     val enabled by viewModel.enabled.collectAsStateWithLifecycle()
+    val workoutCompleted by viewModel.workoutCompleted.collectAsStateWithLifecycle()
 
     BackHandler(
         onBack = {
@@ -57,6 +58,8 @@ fun PlayWorkoutScreen(
             )
         },
         enabled = enabled,
+        workoutCompleted = workoutCompleted,
+        onClickedSeeWorkout = { viewModel.onEvent(event = PlayWorkoutViewEvent.ClickedSeeWorkout) },
     )
 }
 
@@ -72,6 +75,8 @@ private fun PlayWorkoutContent(
     onClickedDialogCancel: () -> Unit,
     onClickedPause: () -> Unit,
     enabled: Boolean,
+    workoutCompleted: Boolean,
+    onClickedSeeWorkout: () -> Unit,
 ) {
     if (confirmationDialogVisible) {
         ConfirmationDialog(
@@ -121,8 +126,12 @@ private fun PlayWorkoutContent(
         }, enabled = enabled) {
             Text(text)
         }
-
-
+        if (workoutCompleted) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(onClick = onClickedSeeWorkout) {
+                Text("See Workout")
+            }
+        }
     }
 
 }

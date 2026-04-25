@@ -36,6 +36,7 @@ class StravaApi(private val client: HttpClient) {
     suspend fun createActivity(
         accessToken: String,
         name: String,
+        description: String,
         sportType: String,
         startDateLocal: String,
         elapsedTime: Int,
@@ -45,6 +46,7 @@ class StravaApi(private val client: HttpClient) {
             setBody(CreateActivityRequest(
                 accessToken = accessToken,
                 name = name,
+                description = description,
                 sportType = sportType,
                 startDateLocal = startDateLocal,
                 elapsedTime = elapsedTime,
@@ -58,6 +60,7 @@ class StravaApi(private val client: HttpClient) {
 private data class CreateActivityRequest(
     @SerialName("access_token") val accessToken: String,
     @SerialName("name") val name: String,
+    @SerialName("description") val description: String,
     @SerialName("sport_type") val sportType: String,
     @SerialName("start_date_local") val startDateLocal: String,
     @SerialName("elapsed_time") val elapsedTime: Int,

@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
@@ -36,6 +39,9 @@ class PlayWorkoutVIewModel(
 
     private val _enabled = MutableStateFlow(true)
     val enabled = _enabled.asStateFlow()
+
+    private val _workoutCompleted = MutableStateFlow(false)
+    val workoutCompleted = _workoutCompleted.asStateFlow()
 
     private var currentStepProgressMs: Long = 0L
     private val currentStepTotalMs: Long
@@ -62,6 +68,7 @@ class PlayWorkoutVIewModel(
 
     private var pollProgressJob: Job? = null
     private var runningMark: TimeMark? = null
+    private var workoutStartDateLocal: String? = null
 
     fun onEvent(event: PlayWorkoutViewEvent) {
         when (event) {
@@ -70,6 +77,7 @@ class PlayWorkoutVIewModel(
             is PlayWorkoutViewEvent.ClickedPlay -> onClickedPlay()
             is PlayWorkoutViewEvent.ClickedPause -> onClickedPause()
             is PlayWorkoutViewEvent.ClickedSystemBack -> onClickedSystemBack()
+            is PlayWorkoutViewEvent.ClickedSeeWorkout -> onClickedSeeWorkout()
         }
     }
 
@@ -94,6 +102,9 @@ class PlayWorkoutVIewModel(
         if (_play.value) {
             if (runningMark == null) {
                 runningMark = TimeSource.Monotonic.markNow()
+                if (workoutStartDateLocal == null) {
+                    workoutStartDateLocal = formatStartDate(Clock.System.now())
+                }
             }
 
             pollProgressJob?.cancel()
@@ -110,6 +121,23 @@ class PlayWorkoutVIewModel(
         pauseWorkout()
     }
 
+    private fun onClickedSeeWorkout() {
+        router.routeTo(
+            destination = PlayWorkoutDestination.NavigateToWorkoutReview(
+                name = workouts.firstOrNull()?.name ?: "HIIT Workout",
+                description = workouts.joinToString(separator = "\n") { workout ->
+                    workout.intervals.joinToString(separator = "\n") { interval ->
+                        "${interval.name}: ${interval.duration}s work / ${interval.rest}s rest"
+                    }
+                },
+                startDateLocal = workoutStartDateLocal ?: formatStartDate(Clock.System.now()),
+                elapsedTime = workouts.sumOf { workout ->
+                    workout.intervals.sumOf { interval -> interval.duration + interval.rest }
+                },
+            )
+        )
+    }
+
     private fun onClickedSystemBack() {
         pauseWorkout()
 
@@ -118,6 +146,12 @@ class PlayWorkoutVIewModel(
                 confirmationDialogVisible = true,
             )
         }
+    }
+
+    private fun formatStartDate(instant: kotlinx.datetime.Instant): String {
+        val local = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        return "${local.year}-${local.monthNumber.toString().padStart(2, '0')}-${local.dayOfMonth.toString().padStart(2, '0')}" +
+                "T${local.hour.toString().padStart(2, '0')}:${local.minute.toString().padStart(2, '0')}:${local.second.toString().padStart(2, '0')}"
     }
 
     private fun formatMs(ms: Long): String {
@@ -170,6 +204,7 @@ class PlayWorkoutVIewModel(
                             _play.value = false
                             _text.value = "Start"
                             _enabled.value = false
+                            _workoutCompleted.value = true
                             pollProgressJob?.cancel()
 
                         } else {
