@@ -5,24 +5,23 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
+import io.ktor.http.contentType
 
 class StravaApi(private val client: HttpClient) {
-    suspend fun getAccessToken(
-        clientId: Int,
-        clientSecret: String,
+    suspend fun getAccessTokenViaProxy(
         code: String,
     ): StravaAuthenticationDto {
-        return client.post(urlString = StravaEndpoints.OAUTH_TOKEN) {
-            parameter(key = "client_id", value = clientId)
-            parameter(key = "client_secret", value = clientSecret)
-            parameter(key = "code", value = code)
-            parameter(key = "grant_type", value = StravaGrantTypes.AUTH_CODE)
-        }.body()
+        val response = client.post(urlString = ProxyEndpoints.OAUTH_TOKEN) {
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("code" to code))
+        }
+        println("Proxy token exchange status: ${response.status}")
+        return response.body()
     }
 
     suspend fun createActivity(
@@ -50,10 +49,9 @@ class StravaApi(private val client: HttpClient) {
 
 private object StravaEndpoints {
     const val BASE_URL = "https://www.strava.com"
-    const val OAUTH_TOKEN = "$BASE_URL/oauth/token"
     const val ACTIVITIES = "$BASE_URL/api/v3/activities"
 }
 
-private object StravaGrantTypes {
-    const val AUTH_CODE = "authorization_code"
+private object ProxyEndpoints {
+    const val OAUTH_TOKEN = "https://strava-token-proxy.hiit-timer-app.workers.dev"
 }
