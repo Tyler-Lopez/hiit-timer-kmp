@@ -28,6 +28,8 @@ sealed interface Route : NavKey {
 
     @Serializable
     data class WorkoutReview(
+        val name: String,
+        val description: String,
         val startDateLocal: String,
         val elapsedTime: Int,
     ) : Route

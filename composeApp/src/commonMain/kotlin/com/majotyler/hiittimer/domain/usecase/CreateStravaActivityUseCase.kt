@@ -9,6 +9,7 @@ class CreateStravaActivityUseCase(
 ) {
     suspend operator fun invoke(
         name: String,
+        description: String,
         sportType: String,
         startDateLocal: String,
         elapsedTime: Int,
@@ -18,6 +19,7 @@ class CreateStravaActivityUseCase(
         stravaRepository.createActivity(
             accessToken = token.accessToken,
             name = name,
+            description = description,
             sportType = sportType,
             startDateLocal = startDateLocal,
             elapsedTime = elapsedTime,

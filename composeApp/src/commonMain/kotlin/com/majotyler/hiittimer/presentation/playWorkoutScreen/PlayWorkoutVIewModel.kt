@@ -124,6 +124,12 @@ class PlayWorkoutVIewModel(
     private fun onClickedSeeWorkout() {
         router.routeTo(
             destination = PlayWorkoutDestination.NavigateToWorkoutReview(
+                name = workouts.firstOrNull()?.name ?: "HIIT Workout",
+                description = workouts.joinToString(separator = "\n") { workout ->
+                    workout.intervals.joinToString(separator = "\n") { interval ->
+                        "${interval.name}: ${interval.duration}s work / ${interval.rest}s rest"
+                    }
+                },
                 startDateLocal = workoutStartDateLocal ?: formatStartDate(Clock.System.now()),
                 elapsedTime = workouts.sumOf { workout ->
                     workout.intervals.sumOf { interval -> interval.duration + interval.rest }
