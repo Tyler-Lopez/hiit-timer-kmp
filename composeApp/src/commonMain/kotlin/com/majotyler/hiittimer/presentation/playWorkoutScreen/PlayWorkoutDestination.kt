@@ -6,6 +6,8 @@ import androidx.compose.runtime.Immutable
 sealed interface PlayWorkoutDestination {
     data object NavigateUp : PlayWorkoutDestination
     data class NavigateToWorkoutReview(
+        val name: String,
+        val description: String,
         val startDateLocal: String,
         val elapsedTime: Int,
     ) : PlayWorkoutDestination

@@ -19,6 +19,8 @@ import kotlinx.datetime.Clock
 class WorkoutReviewViewModel(
     private val router: Router<WorkoutReviewDestination>,
     private val stravaAccessCode: String?,
+    private val name: String,
+    private val description: String,
     private val startDateLocal: String,
     private val elapsedTime: Int,
     private val getStoredStravaTokenUseCase: GetStoredStravaTokenUseCase,
@@ -88,7 +90,8 @@ class WorkoutReviewViewModel(
         viewModelScope.launch {
             try {
                 createStravaActivityUseCase(
-                    name = "HIIT Timer Workout",
+                    name = name,
+                    description = description,
                     sportType = "HighIntensityIntervalTraining",
                     startDateLocal = startDateLocal,
                     elapsedTime = elapsedTime,

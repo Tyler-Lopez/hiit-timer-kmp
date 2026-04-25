@@ -162,6 +162,8 @@ private fun HiitNavDisplay(
                             is PlayWorkoutDestination.NavigateToWorkoutReview ->
                                 backStack.add(
                                     element = Route.WorkoutReview(
+                                        name = destination.name,
+                                        description = destination.description,
                                         startDateLocal = destination.startDateLocal,
                                         elapsedTime = destination.elapsedTime,
                                     )
@@ -188,6 +190,8 @@ private fun HiitNavDisplay(
                     },
                     stravaAccessCode = stravaAccessCode,
                     stravaTokenStorageRepository = stravaTokenStorageRepository,
+                    name = route.name,
+                    description = route.description,
                     startDateLocal = route.startDateLocal,
                     elapsedTime = route.elapsedTime,
                 )

@@ -17,6 +17,8 @@ class WorkoutReviewViewModelFactory(
     private val router: (WorkoutReviewDestination) -> Unit,
     private val stravaAccessCode: String?,
     private val stravaTokenStorageRepository: StravaTokenStorageRepository,
+    private val name: String,
+    private val description: String,
     private val startDateLocal: String,
     private val elapsedTime: Int,
 ) : ViewModelProvider.Factory {
@@ -25,6 +27,8 @@ class WorkoutReviewViewModelFactory(
         return WorkoutReviewViewModel(
             router = router,
             stravaAccessCode = stravaAccessCode,
+            name = name,
+            description = description,
             startDateLocal = startDateLocal,
             elapsedTime = elapsedTime,
             getStoredStravaTokenUseCase = GetStoredStravaTokenUseCase(repository = stravaTokenStorageRepository),
