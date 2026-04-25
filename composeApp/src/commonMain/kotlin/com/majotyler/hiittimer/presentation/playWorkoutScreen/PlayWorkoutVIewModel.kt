@@ -37,6 +37,9 @@ class PlayWorkoutVIewModel(
     private val _enabled = MutableStateFlow(true)
     val enabled = _enabled.asStateFlow()
 
+    private val _workoutCompleted = MutableStateFlow(false)
+    val workoutCompleted = _workoutCompleted.asStateFlow()
+
     private var currentStepProgressMs: Long = 0L
     private val currentStepTotalMs: Long
         get() = currentWorkoutInterval
@@ -70,6 +73,7 @@ class PlayWorkoutVIewModel(
             is PlayWorkoutViewEvent.ClickedPlay -> onClickedPlay()
             is PlayWorkoutViewEvent.ClickedPause -> onClickedPause()
             is PlayWorkoutViewEvent.ClickedSystemBack -> onClickedSystemBack()
+            is PlayWorkoutViewEvent.ClickedSeeWorkout -> onClickedSeeWorkout()
         }
     }
 
@@ -108,6 +112,10 @@ class PlayWorkoutVIewModel(
 
     private fun onClickedPause() {
         pauseWorkout()
+    }
+
+    private fun onClickedSeeWorkout() {
+        router.routeTo(destination = PlayWorkoutDestination.NavigateToWorkoutReview)
     }
 
     private fun onClickedSystemBack() {
@@ -170,6 +178,7 @@ class PlayWorkoutVIewModel(
                             _play.value = false
                             _workoutPlayState.value = WorkoutPlayState.PAUSED
                             _enabled.value = false
+                            _workoutCompleted.value = true
                             pollProgressJob?.cancel()
 
                         } else {

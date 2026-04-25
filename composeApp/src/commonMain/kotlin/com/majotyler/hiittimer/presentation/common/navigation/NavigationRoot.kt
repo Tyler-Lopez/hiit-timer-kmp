@@ -26,6 +26,9 @@ import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutDestination
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutScreen
 import com.majotyler.hiittimer.presentation.playWorkoutScreen.PlayWorkoutViewModelFactory
+import com.majotyler.hiittimer.presentation.workoutReviewScreen.WorkoutReviewDestination
+import com.majotyler.hiittimer.presentation.workoutReviewScreen.WorkoutReviewScreen
+import com.majotyler.hiittimer.presentation.workoutReviewScreen.WorkoutReviewViewModelFactory
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlin.uuid.ExperimentalUuidApi
@@ -72,6 +75,10 @@ private fun HiitNavDisplay(
                         subclass = Route.BuildWorkouts::class,
                         serializer = Route.BuildWorkouts.serializer(),
                     )
+                    subclass(
+                        subclass = Route.WorkoutReview::class,
+                        serializer = Route.WorkoutReview.serializer(),
+                    )
                 }
             }
         },
@@ -111,12 +118,9 @@ private fun HiitNavDisplay(
                             }
                         }
                     },
-                    stravaAccessCode = stravaAccessCode,
-                    stravaTokenStorageRepository = stravaTokenStorageRepository,
                 )
 
                 HomeScreen(
-                    urlOpener = urlOpener,
                     viewModel = viewModel(factory = viewModelFactory),
                 )
             }
@@ -156,6 +160,8 @@ private fun HiitNavDisplay(
                     router = { destination ->
                         when (destination) {
                             PlayWorkoutDestination.NavigateUp -> backStack.removeLast()
+                            PlayWorkoutDestination.NavigateToWorkoutReview ->
+                                backStack.add(element = Route.WorkoutReview)
                         }
                     },
                     workouts = route.workouts,
@@ -166,6 +172,23 @@ private fun HiitNavDisplay(
                         factory = viewModelFactory,
                         key = Uuid.random().toString(),
                     ),
+                )
+            }
+
+            entry<Route.WorkoutReview> {
+                val viewModelFactory = WorkoutReviewViewModelFactory(
+                    router = { destination ->
+                        when (destination) {
+                            WorkoutReviewDestination.NavigateUp -> backStack.removeLast()
+                        }
+                    },
+                    stravaAccessCode = stravaAccessCode,
+                    stravaTokenStorageRepository = stravaTokenStorageRepository,
+                )
+
+                WorkoutReviewScreen(
+                    urlOpener = urlOpener,
+                    viewModel = viewModel(factory = viewModelFactory),
                 )
             }
         }

@@ -18,4 +18,7 @@ sealed interface PlayWorkoutViewEvent {
 
     /** The user clicked the system back gesture. */
     data object ClickedSystemBack : PlayWorkoutViewEvent
+
+    /** The user clicked the "See Workout" button to review the completed workout. */
+    data object ClickedSeeWorkout : PlayWorkoutViewEvent
 }

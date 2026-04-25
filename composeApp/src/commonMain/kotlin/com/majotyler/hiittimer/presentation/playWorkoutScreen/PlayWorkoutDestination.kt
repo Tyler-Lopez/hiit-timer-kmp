@@ -5,4 +5,5 @@ import androidx.compose.runtime.Immutable
 @Immutable
 sealed interface PlayWorkoutDestination {
     data object NavigateUp : PlayWorkoutDestination
+    data object NavigateToWorkoutReview : PlayWorkoutDestination
 }
