@@ -7,6 +7,7 @@ import com.majotyler.hiittimer.data.api.StravaApi
 import com.majotyler.hiittimer.data.repository.StravaRepository
 import com.majotyler.hiittimer.domain.usecase.CreateStravaActivityUseCase
 import com.majotyler.hiittimer.domain.usecase.GetStoredStravaTokenUseCase
+import com.majotyler.hiittimer.domain.usecase.RefreshStravaTokenUseCase
 import com.majotyler.hiittimer.domain.usecase.SaveStravaTokenUseCase
 import com.majotyler.hiittimer.network.HttpClientFactory
 import com.majotyler.hiittimer.presentation.common.navigation.Router
@@ -20,6 +21,7 @@ class HomeViewModel(
     private val stravaAccessCode: String?,
     private val getStoredStravaTokenUseCase: GetStoredStravaTokenUseCase,
     private val saveStravaTokenUseCase: SaveStravaTokenUseCase,
+    private val refreshStravaTokenUseCase: RefreshStravaTokenUseCase,
 ) : ViewModel() {
 
     private val _openUrl = MutableSharedFlow<String>()
@@ -51,10 +53,16 @@ class HomeViewModel(
             when {
                 storedToken != null && storedToken.expiresAt > nowSeconds -> {
                     println("Stored token is valid, expires in ${storedToken.expiresAt - nowSeconds}s")
-                    println("access_token (encrypted): ${storedToken.accessToken}")
+                    println("access_token: ${storedToken.accessToken}")
                 }
                 storedToken != null -> {
-                    println("Stored token is expired (expired ${nowSeconds - storedToken.expiresAt}s ago)")
+                    println("Stored token is expired (expired ${nowSeconds - storedToken.expiresAt}s ago), refreshing...")
+                    try {
+                        refreshStravaTokenUseCase(refreshToken = storedToken.refreshToken)
+                        println("Token refresh successful")
+                    } catch (e: Exception) {
+                        println("Token refresh error: $e")
+                    }
                 }
                 else -> {
                     println("No stored token found")
@@ -65,8 +73,8 @@ class HomeViewModel(
                 try {
                     println("Exchanging OAuth code for token via proxy...")
                     val result = stravaRepository.getAccessToken(code = stravaAccessCode)
-                    println("access_token (encrypted): ${result.accessToken}")
-                    println("refresh_token (encrypted): ${result.refreshToken}")
+                    println("access_token: ${result.accessToken}")
+                    println("refresh_token: ${result.refreshToken}")
                     println("token_type: ${result.tokenType}")
                     println("expires_at: ${result.expiresAt}")
                     println("expires_in: ${result.expiresIn}")
