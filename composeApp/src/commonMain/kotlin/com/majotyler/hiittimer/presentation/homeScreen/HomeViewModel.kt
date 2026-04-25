@@ -3,47 +3,34 @@ package com.majotyler.hiittimer.presentation.homeScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ktor.http.*
-import com.majotyler.hiittimer.data.api.StravaApi
 import com.majotyler.hiittimer.data.repository.StravaRepository
 import com.majotyler.hiittimer.domain.usecase.CreateStravaActivityUseCase
 import com.majotyler.hiittimer.domain.usecase.GetStoredStravaTokenUseCase
 import com.majotyler.hiittimer.domain.usecase.RefreshStravaTokenUseCase
 import com.majotyler.hiittimer.domain.usecase.SaveStravaTokenUseCase
-import com.majotyler.hiittimer.network.HttpClientFactory
 import com.majotyler.hiittimer.presentation.common.navigation.Router
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
 class HomeViewModel(
     private val router: Router<HomeDestination>,
     private val stravaAccessCode: String?,
+    private val stravaRepository: StravaRepository,
     private val getStoredStravaTokenUseCase: GetStoredStravaTokenUseCase,
     private val saveStravaTokenUseCase: SaveStravaTokenUseCase,
     private val refreshStravaTokenUseCase: RefreshStravaTokenUseCase,
+    private val createStravaActivityUseCase: CreateStravaActivityUseCase,
 ) : ViewModel() {
 
     private val _openUrl = MutableSharedFlow<String>()
     val openUrl = _openUrl.asSharedFlow()
 
-    // TODO This is temporary to show something to create a Strava Activity
-    val showCreateActivityButton = stravaAccessCode != null
-
-    private val httpClient by lazy {
-        HttpClientFactory.create()
-    }
-
-    private val stravaApi: StravaApi by lazy {
-        StravaApi(httpClient)
-    }
-
-    private val stravaRepository by lazy {
-        StravaRepository(stravaApi)
-    }
-    private val createStravaActivityUseCase by lazy {
-        CreateStravaActivityUseCase()
-    }
+    private val _showCreateActivityButton = MutableStateFlow(false)
+    val showCreateActivityButton = _showCreateActivityButton.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -54,12 +41,14 @@ class HomeViewModel(
                 storedToken != null && storedToken.expiresAt > nowSeconds -> {
                     println("Stored token is valid, expires in ${storedToken.expiresAt - nowSeconds}s")
                     println("access_token: ${storedToken.accessToken}")
+                    _showCreateActivityButton.value = true
                 }
                 storedToken != null -> {
                     println("Stored token is expired (expired ${nowSeconds - storedToken.expiresAt}s ago), refreshing...")
                     try {
                         refreshStravaTokenUseCase(refreshToken = storedToken.refreshToken)
                         println("Token refresh successful")
+                        _showCreateActivityButton.value = true
                     } catch (e: Exception) {
                         println("Token refresh error: $e")
                     }
@@ -83,6 +72,7 @@ class HomeViewModel(
                         refreshToken = result.refreshToken,
                         expiresAt = result.expiresAt,
                     )
+                    _showCreateActivityButton.value = true
                 } catch (e: Exception) {
                     println("Token exchange error: $e")
                 }
@@ -106,7 +96,17 @@ class HomeViewModel(
 
     private fun onClickedCreateStravaActivity() {
         viewModelScope.launch {
-            createStravaActivityUseCase()
+            try {
+                createStravaActivityUseCase(
+                    name = "HIIT Timer Workout",
+                    sportType = "HighIntensityIntervalTraining",
+                    startDateLocal = "2026-04-25T12:00:00Z",
+                    elapsedTime = 1800,
+                )
+                println("Create activity successful")
+            } catch (e: Exception) {
+                println("Create activity error: $e")
+            }
         }
     }
 
