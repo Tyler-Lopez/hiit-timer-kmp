@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
@@ -65,6 +68,7 @@ class PlayWorkoutVIewModel(
 
     private var pollProgressJob: Job? = null
     private var runningMark: TimeMark? = null
+    private var workoutStartDateLocal: String? = null
 
     fun onEvent(event: PlayWorkoutViewEvent) {
         when (event) {
@@ -98,6 +102,9 @@ class PlayWorkoutVIewModel(
         if (_play.value) {
             if (runningMark == null) {
                 runningMark = TimeSource.Monotonic.markNow()
+                if (workoutStartDateLocal == null) {
+                    workoutStartDateLocal = formatStartDate(Clock.System.now())
+                }
             }
 
             pollProgressJob?.cancel()
@@ -115,7 +122,14 @@ class PlayWorkoutVIewModel(
     }
 
     private fun onClickedSeeWorkout() {
-        router.routeTo(destination = PlayWorkoutDestination.NavigateToWorkoutReview)
+        router.routeTo(
+            destination = PlayWorkoutDestination.NavigateToWorkoutReview(
+                startDateLocal = workoutStartDateLocal ?: formatStartDate(Clock.System.now()),
+                elapsedTime = workouts.sumOf { workout ->
+                    workout.intervals.sumOf { interval -> interval.duration + interval.rest }
+                },
+            )
+        )
     }
 
     private fun onClickedSystemBack() {
@@ -126,6 +140,12 @@ class PlayWorkoutVIewModel(
                 confirmationDialogVisible = true,
             )
         }
+    }
+
+    private fun formatStartDate(instant: kotlinx.datetime.Instant): String {
+        val local = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        return "${local.year}-${local.monthNumber.toString().padStart(2, '0')}-${local.dayOfMonth.toString().padStart(2, '0')}" +
+                "T${local.hour.toString().padStart(2, '0')}:${local.minute.toString().padStart(2, '0')}:${local.second.toString().padStart(2, '0')}"
     }
 
     private fun formatMs(ms: Long): String {

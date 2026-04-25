@@ -160,8 +160,13 @@ private fun HiitNavDisplay(
                     router = { destination ->
                         when (destination) {
                             PlayWorkoutDestination.NavigateUp -> backStack.removeLast()
-                            PlayWorkoutDestination.NavigateToWorkoutReview ->
-                                backStack.add(element = Route.WorkoutReview)
+                            is PlayWorkoutDestination.NavigateToWorkoutReview ->
+                                backStack.add(
+                                    element = Route.WorkoutReview(
+                                        startDateLocal = destination.startDateLocal,
+                                        elapsedTime = destination.elapsedTime,
+                                    )
+                                )
                         }
                     },
                     workouts = route.workouts,
@@ -175,7 +180,7 @@ private fun HiitNavDisplay(
                 )
             }
 
-            entry<Route.WorkoutReview> {
+            entry<Route.WorkoutReview> { route ->
                 val viewModelFactory = WorkoutReviewViewModelFactory(
                     router = { destination ->
                         when (destination) {
@@ -184,6 +189,8 @@ private fun HiitNavDisplay(
                     },
                     stravaAccessCode = stravaAccessCode,
                     stravaTokenStorageRepository = stravaTokenStorageRepository,
+                    startDateLocal = route.startDateLocal,
+                    elapsedTime = route.elapsedTime,
                 )
 
                 WorkoutReviewScreen(
