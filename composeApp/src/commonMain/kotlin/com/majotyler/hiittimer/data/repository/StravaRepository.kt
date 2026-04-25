@@ -12,6 +12,12 @@ class StravaRepository(
         return api.getAccessTokenViaProxy(code = code)
     }
 
+    suspend fun refreshAccessToken(
+        refreshToken: String,
+    ): StravaAuthenticationDto {
+        return api.refreshAccessTokenViaProxy(refreshToken = refreshToken)
+    }
+
     suspend fun createActivity(
         accessToken: String,
         name: String,
