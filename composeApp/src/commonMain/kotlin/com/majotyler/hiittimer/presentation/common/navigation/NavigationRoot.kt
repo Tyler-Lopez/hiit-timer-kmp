@@ -8,6 +8,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.majotyler.hiittimer.data.repository.StravaTokenStorageRepository
 import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.platform.UrlOpener
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
@@ -34,11 +35,13 @@ import kotlin.uuid.Uuid
 fun NavigationRoot(
     urlOpener: UrlOpener,
     stravaAccessCode: String?,
+    stravaTokenStorageRepository: StravaTokenStorageRepository,
 ) {
     HiitAppTheme {
         HiitNavDisplay(
             urlOpener = urlOpener,
             stravaAccessCode = stravaAccessCode,
+            stravaTokenStorageRepository = stravaTokenStorageRepository,
         )
     }
 }
@@ -48,6 +51,7 @@ fun NavigationRoot(
 private fun HiitNavDisplay(
     urlOpener: UrlOpener,
     stravaAccessCode: String?,
+    stravaTokenStorageRepository: StravaTokenStorageRepository,
 ) {
 
     val resultBus = remember { ResultEventBus() }
@@ -107,6 +111,7 @@ private fun HiitNavDisplay(
                         }
                     },
                     stravaAccessCode = stravaAccessCode,
+                    stravaTokenStorageRepository = stravaTokenStorageRepository,
                 )
 
                 HomeScreen(

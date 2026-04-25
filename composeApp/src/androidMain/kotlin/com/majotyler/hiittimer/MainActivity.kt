@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
+import com.majotyler.hiittimer.data.repository.AndroidStravaTokenStorageRepository
 import com.majotyler.hiittimer.presentation.common.navigation.NavigationRoot
 import com.majotyler.hiittimer.presentation.platform.AndroidUrlOpener
 
@@ -19,11 +20,14 @@ class MainActivity : ComponentActivity() {
 
         println("Strava access code: $accessCode")
 
+        val stravaTokenStorageRepository = AndroidStravaTokenStorageRepository(context = this)
+
         setContent {
             MaterialTheme {
                 NavigationRoot(
                     urlOpener = AndroidUrlOpener(context = this),
                     stravaAccessCode = accessCode,
+                    stravaTokenStorageRepository = stravaTokenStorageRepository,
                 )
             }
         }
