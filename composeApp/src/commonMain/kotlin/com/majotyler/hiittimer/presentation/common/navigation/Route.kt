@@ -25,4 +25,7 @@ sealed interface Route : NavKey {
     data class PlayWorkout(
         val workouts: List<Workout>,
     ) : Route
+
+    @Serializable
+    data object WorkoutReview : Route
 }
