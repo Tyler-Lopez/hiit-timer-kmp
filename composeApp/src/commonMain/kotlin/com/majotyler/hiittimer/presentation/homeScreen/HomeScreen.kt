@@ -7,9 +7,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewModelScope
 import com.majotyler.hiittimer.platform.UrlOpener
 
 @Composable
@@ -18,6 +19,8 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val showCreateActivityButton by viewModel.showCreateActivityButton.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.openUrl.collect { url ->
             urlOpener.openUrl(url = url)
@@ -45,7 +48,7 @@ fun HomeScreen(
             Text(text = "Connect with Strava")
         }
 
-        if (viewModel.showCreateActivityButton) {
+        if (showCreateActivityButton) {
             Button(
                 onClick = {
                     viewModel.onEvent(event = HomeViewEvent.ClickedCreateStravaActivity)

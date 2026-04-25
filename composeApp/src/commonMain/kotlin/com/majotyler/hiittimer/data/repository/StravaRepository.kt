@@ -9,22 +9,28 @@ class StravaRepository(
     suspend fun getAccessToken(
         code: String,
     ): StravaAuthenticationDto {
-        return api.getAccessTokenViaProxy(code = code)
+        return api.getAccessToken(code = code)
     }
 
     suspend fun refreshAccessToken(
         refreshToken: String,
     ): StravaAuthenticationDto {
-        return api.refreshAccessTokenViaProxy(refreshToken = refreshToken)
+        return api.refreshAccessToken(refreshToken = refreshToken)
     }
 
     suspend fun createActivity(
         accessToken: String,
         name: String,
-        type: String,
+        sportType: String,
         startDateLocal: String,
         elapsedTime: Int,
     ) {
-        return api.createActivity(accessToken, name, type, startDateLocal, elapsedTime)
+        api.createActivity(
+            accessToken = accessToken,
+            name = name,
+            sportType = sportType,
+            startDateLocal = startDateLocal,
+            elapsedTime = elapsedTime,
+        )
     }
 }
