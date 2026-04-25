@@ -1,7 +1,6 @@
 package com.majotyler.hiittimer.domain.usecase
 
 import com.majotyler.hiittimer.data.repository.StravaRepository
-import com.majotyler.hiittimer.network.StravaClientSecret
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
