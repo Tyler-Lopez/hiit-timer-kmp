@@ -20,7 +20,7 @@ class PlayWorkoutVIewModel(
     private val workouts: List<Workout>,
 ) : ViewModel() {
     private val _state = MutableStateFlow(
-        value = PlayWorkoutViewState(
+        value = buildState(
             confirmationDialogVisible = false,
             progressDisplay = formatMs(ms = 0L),
             progress = 0F,
@@ -29,8 +29,8 @@ class PlayWorkoutVIewModel(
     val state = _state.asStateFlow()
 
     private val _play = MutableStateFlow(false)
-
     val play = _play.asStateFlow()
+
     private val _text = MutableStateFlow("Start")
     val text = _text.asStateFlow()
 
@@ -74,16 +74,11 @@ class PlayWorkoutVIewModel(
     }
 
     private fun onClickedDialogCancel() {
-        _state.update {
-            it.copy(confirmationDialogVisible = false)
-        }
+        _state.update { it.copy(confirmationDialogVisible = false) }
     }
 
     private fun onClickedDialogConfirm() {
-        _state.update {
-            it.copy(confirmationDialogVisible = false)
-        }
-
+        _state.update { it.copy(confirmationDialogVisible = false) }
         router.routeTo(destination = PlayWorkoutDestination.NavigateUp)
     }
 
@@ -112,22 +107,7 @@ class PlayWorkoutVIewModel(
 
     private fun onClickedSystemBack() {
         pauseWorkout()
-
-        _state.update {
-            it.copy(
-                confirmationDialogVisible = true,
-            )
-        }
-    }
-
-    private fun formatMs(ms: Long): String {
-        val minutes = ms / MILLISECONDS_IN_MINUTE
-        val seconds = (ms % MILLISECONDS_IN_MINUTE) / MILLISECONDS_IN_SECOND
-        val centiseconds = (ms % MILLISECONDS_IN_SECOND) / MILLISECONDS_IN_CENTISECOND
-
-        return minutes.toString().padStart(2, '0') +
-                ":${seconds.toString().padStart(2, '0')}" +
-                ":${centiseconds.toString().padStart(2, '0')}"
+        _state.update { it.copy(confirmationDialogVisible = true) }
     }
 
     private fun pauseWorkout() {
@@ -147,17 +127,15 @@ class PlayWorkoutVIewModel(
 
             val progress: Float = (currentStepProgressMs / currentStepTotalMs.toFloat())
 
-            _state.update { oldState ->
-                oldState.copy(
+            _state.update { _ ->
+                buildState(
+                    confirmationDialogVisible = _state.value.confirmationDialogVisible,
                     progressDisplay = formatMs(ms = currentStepProgressMs),
                     progress = progress,
                 ).also { newState ->
-
                     runningMark = TimeSource.Monotonic.markNow()
 
-                    val hasReachedEndOfCurrentStep: Boolean = newState.progress >= 1F
-
-                    if (hasReachedEndOfCurrentStep) {
+                    if (newState.progress >= 1F) {
                         val lastIndexOfIntervalsInCurrentWorkout =
                             currentWorkout?.intervals?.lastIndex
                         val isResting =
@@ -171,7 +149,6 @@ class PlayWorkoutVIewModel(
                             _text.value = "Start"
                             _enabled.value = false
                             pollProgressJob?.cancel()
-
                         } else {
                             nextStep()
                         }
@@ -183,18 +160,32 @@ class PlayWorkoutVIewModel(
 
     private fun nextStep() {
         when (currentWorkoutIntervalState) {
-            PlayWorkoutStateOfInterval.EXERCISING -> {
-                currentWorkoutIntervalState =
-                    PlayWorkoutStateOfInterval.RESTING
-            }
+            PlayWorkoutStateOfInterval.EXERCISING ->
+                currentWorkoutIntervalState = PlayWorkoutStateOfInterval.RESTING
 
             PlayWorkoutStateOfInterval.RESTING -> {
                 currentWorkoutIntervalIndex++
-                currentWorkoutIntervalState =
-                    PlayWorkoutStateOfInterval.EXERCISING
+                currentWorkoutIntervalState = PlayWorkoutStateOfInterval.EXERCISING
             }
         }
         currentStepProgressMs = 0L
+    }
+
+    private fun buildState(
+        confirmationDialogVisible: Boolean,
+        progressDisplay: String,
+        progress: Float,
+    ): PlayWorkoutViewState {
+        val totalIntervals = currentWorkout?.intervals?.size ?: 0
+        return PlayWorkoutViewState(
+            confirmationDialogVisible = confirmationDialogVisible,
+            intervalName = currentWorkoutInterval?.name ?: "",
+            intervalNumber = currentWorkoutIntervalIndex + 1,
+            intervalTotal = totalIntervals,
+            isResting = currentWorkoutIntervalState == PlayWorkoutStateOfInterval.RESTING,
+            progressDisplay = progressDisplay,
+            progress = progress,
+        )
     }
 
     companion object {
@@ -202,5 +193,15 @@ class PlayWorkoutVIewModel(
         private const val MILLISECONDS_IN_CENTISECOND = 10L
         private const val MILLISECONDS_IN_MINUTE = 60_000L
         private const val MILLISECONDS_IN_SECOND = 1_000L
+
+        private fun formatMs(ms: Long): String {
+            val minutes = ms / MILLISECONDS_IN_MINUTE
+            val seconds = (ms % MILLISECONDS_IN_MINUTE) / MILLISECONDS_IN_SECOND
+            val centiseconds = (ms % MILLISECONDS_IN_SECOND) / MILLISECONDS_IN_CENTISECOND
+
+            return minutes.toString().padStart(2, '0') +
+                    ":${seconds.toString().padStart(2, '0')}" +
+                    ":${centiseconds.toString().padStart(2, '0')}"
+        }
     }
 }
