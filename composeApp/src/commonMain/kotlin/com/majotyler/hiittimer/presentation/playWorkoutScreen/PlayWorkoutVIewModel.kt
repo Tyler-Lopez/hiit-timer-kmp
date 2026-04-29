@@ -60,6 +60,9 @@ class PlayWorkoutVIewModel(
     private val currentWorkoutInterval: Interval?
         get() = currentWorkout?.intervals?.getOrNull(index = currentWorkoutIntervalIndex)
 
+    /** Tracks how many times the current workout's intervals have been repeated (0-based). */
+    private var currentWorkoutRepetitionIndex: Int = 0
+
     private var pollProgressJob: Job? = null
     private var runningMark: TimeMark? = null
 
@@ -164,14 +167,34 @@ class PlayWorkoutVIewModel(
                             currentWorkoutIntervalState == PlayWorkoutStateOfInterval.RESTING
                         val currentIntervalIsLastInWorkout =
                             currentWorkoutIntervalIndex == lastIndexOfIntervalsInCurrentWorkout
-                        val hasFinishedAllWorkouts = isResting && currentIntervalIsLastInWorkout
+                        val hasFinishedCurrentWorkoutCycle = isResting && currentIntervalIsLastInWorkout
 
-                        if (hasFinishedAllWorkouts) {
-                            _play.value = false
-                            _text.value = "Start"
-                            _enabled.value = false
-                            pollProgressJob?.cancel()
+                        if (hasFinishedCurrentWorkoutCycle) {
+                            val totalRepetitions = currentWorkout?.repetitions ?: 1
+                            val hasMoreRepetitions = currentWorkoutRepetitionIndex < totalRepetitions - 1
+                            val isLastWorkout = currentWorkoutIndex == workouts.lastIndex
 
+                            when {
+                                hasMoreRepetitions -> {
+                                    currentWorkoutRepetitionIndex++
+                                    currentWorkoutIntervalIndex = 0
+                                    currentWorkoutIntervalState = PlayWorkoutStateOfInterval.EXERCISING
+                                    currentStepProgressMs = 0L
+                                }
+                                !isLastWorkout -> {
+                                    currentWorkoutRepetitionIndex = 0
+                                    currentWorkoutIndex++
+                                    currentWorkoutIntervalIndex = 0
+                                    currentWorkoutIntervalState = PlayWorkoutStateOfInterval.EXERCISING
+                                    currentStepProgressMs = 0L
+                                }
+                                else -> {
+                                    _play.value = false
+                                    _text.value = "Start"
+                                    _enabled.value = false
+                                    pollProgressJob?.cancel()
+                                }
+                            }
                         } else {
                             nextStep()
                         }
