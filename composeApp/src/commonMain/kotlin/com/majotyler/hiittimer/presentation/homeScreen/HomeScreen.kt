@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.majotyler.hiittimer.platform.UrlOpener
 import hiittimer.composeapp.generated.resources.Res
 import hiittimer.composeapp.generated.resources.btn_strava_connect_with_orange
+import hiittimer.composeapp.generated.resources.content_description_connect_with_strava
 import hiittimer.composeapp.generated.resources.home_button_label_launch_build_workouts
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -55,7 +56,7 @@ fun HomeScreen(
         }
         Image(
             painter = painterResource(Res.drawable.btn_strava_connect_with_orange),
-            contentDescription = "Connect with Strava",
+            contentDescription = stringResource(Res.string.content_description_connect_with_strava),
             contentScale = ContentScale.FillHeight,
             modifier = Modifier
                 .height(48.dp)
