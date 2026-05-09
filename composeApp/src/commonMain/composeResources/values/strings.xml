@@ -29,7 +29,6 @@
     <!--endregion Confirmation Dialog -->
 
     <!--region Home -->
-    <string name="home_button_label_connect_with_strava">Connect with Strava</string>
     <string name="home_button_label_launch_build_workouts">Launch BuildWorkoutsScreen</string>
     <!--endregion Home -->
 
@@ -40,6 +39,7 @@
     <!--endregion Play Workout -->
 
     <!--region Shared -->
+    <string name="content_description_connect_with_strava">Connect with Strava</string>
     <string name="content_description_navigate_up">Go back</string>
     <string name="content_description_remove">Remove</string>
     <plurals name="seconds_long">
