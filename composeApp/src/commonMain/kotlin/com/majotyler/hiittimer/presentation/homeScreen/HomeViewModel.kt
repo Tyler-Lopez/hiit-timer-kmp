@@ -84,7 +84,7 @@ class HomeViewModel(
         when (event) {
             is HomeViewEvent.ClickedConnectWithStrava -> onClickedConnectWithStrava()
             is HomeViewEvent.ClickedCreateStravaActivity -> onClickedCreateStravaActivity()
-            is HomeViewEvent.ClickedLaunchBuildWorkouts -> onClickedLaunchBuildWorkouts()
+            is HomeViewEvent.ClickedLaunchChooseWorkout -> onClickedLaunchChooseWorkout()
         }
     }
 
@@ -110,8 +110,8 @@ class HomeViewModel(
         }
     }
 
-    private fun onClickedLaunchBuildWorkouts() {
-        router.routeTo(destination = HomeDestination.NavigateToBuildWorkouts)
+    private fun onClickedLaunchChooseWorkout() {
+        router.routeTo(destination = HomeDestination.NavigateToChooseWorkout)
     }
 
     private fun getAuthUri() = URLBuilder(STRAVA_BASE_AUTH_URL).apply {

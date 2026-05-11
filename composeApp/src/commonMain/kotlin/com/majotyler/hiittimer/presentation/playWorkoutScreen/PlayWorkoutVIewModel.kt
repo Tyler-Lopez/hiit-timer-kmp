@@ -17,7 +17,7 @@ import kotlin.time.TimeSource
 
 class PlayWorkoutVIewModel(
     private val router: Router<PlayWorkoutDestination>,
-    private val workouts: List<Workout>,
+    private val workout: Workout,
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         value = PlayWorkoutViewState(
@@ -39,9 +39,9 @@ class PlayWorkoutVIewModel(
 
     private var currentStepProgressMs: Long = 0L
     private val currentStepTotalMs: Long
-        get() = currentWorkoutInterval
+        get() = currentInterval
             ?.run {
-                val seconds = when (currentWorkoutIntervalState) {
+                val seconds = when (currentIntervalState) {
                     PlayWorkoutStateOfInterval.EXERCISING -> duration
                     PlayWorkoutStateOfInterval.RESTING -> rest
                 }
@@ -49,16 +49,10 @@ class PlayWorkoutVIewModel(
                 milliseconds
             } ?: 0L
 
-    /** The index of the current [Workout] in [workouts]. */
-    private var currentWorkoutIndex: Int = 0
-    private val currentWorkout: Workout?
-        get() = workouts.getOrNull(index = currentWorkoutIndex)
-
-    /** The index of the current [Interval] of [currentWorkout] */
-    private var currentWorkoutIntervalIndex: Int = 0
-    private var currentWorkoutIntervalState = PlayWorkoutStateOfInterval.EXERCISING
-    private val currentWorkoutInterval: Interval?
-        get() = currentWorkout?.intervals?.getOrNull(index = currentWorkoutIntervalIndex)
+    private var currentIntervalIndex: Int = 0
+    private var currentIntervalState = PlayWorkoutStateOfInterval.EXERCISING
+    private val currentInterval: Interval?
+        get() = workout.intervals.getOrNull(index = currentIntervalIndex)
 
     private var pollProgressJob: Job? = null
     private var runningMark: TimeMark? = null
@@ -158,15 +152,12 @@ class PlayWorkoutVIewModel(
                     val hasReachedEndOfCurrentStep: Boolean = newState.progress >= 1F
 
                     if (hasReachedEndOfCurrentStep) {
-                        val lastIndexOfIntervalsInCurrentWorkout =
-                            currentWorkout?.intervals?.lastIndex
-                        val isResting =
-                            currentWorkoutIntervalState == PlayWorkoutStateOfInterval.RESTING
-                        val currentIntervalIsLastInWorkout =
-                            currentWorkoutIntervalIndex == lastIndexOfIntervalsInCurrentWorkout
-                        val hasFinishedAllWorkouts = isResting && currentIntervalIsLastInWorkout
+                        val lastIndexOfIntervals = workout.intervals.lastIndex
+                        val isResting = currentIntervalState == PlayWorkoutStateOfInterval.RESTING
+                        val currentIntervalIsLast = currentIntervalIndex == lastIndexOfIntervals
+                        val hasFinished = isResting && currentIntervalIsLast
 
-                        if (hasFinishedAllWorkouts) {
+                        if (hasFinished) {
                             _play.value = false
                             _workoutPlayState.value = WorkoutPlayState.PAUSED
                             _enabled.value = false
@@ -182,16 +173,14 @@ class PlayWorkoutVIewModel(
     }
 
     private fun nextStep() {
-        when (currentWorkoutIntervalState) {
+        when (currentIntervalState) {
             PlayWorkoutStateOfInterval.EXERCISING -> {
-                currentWorkoutIntervalState =
-                    PlayWorkoutStateOfInterval.RESTING
+                currentIntervalState = PlayWorkoutStateOfInterval.RESTING
             }
 
             PlayWorkoutStateOfInterval.RESTING -> {
-                currentWorkoutIntervalIndex++
-                currentWorkoutIntervalState =
-                    PlayWorkoutStateOfInterval.EXERCISING
+                currentIntervalIndex++
+                currentIntervalState = PlayWorkoutStateOfInterval.EXERCISING
             }
         }
         currentStepProgressMs = 0L

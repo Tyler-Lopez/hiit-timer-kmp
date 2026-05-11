@@ -12,14 +12,14 @@ import com.majotyler.hiittimer.data.repository.StravaTokenStorageRepository
 import com.majotyler.hiittimer.domain.model.Workout
 import com.majotyler.hiittimer.platform.UrlOpener
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
-import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsDestination
-import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsViewEvent
-import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsViewModel
-import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsViewModelFactory
+import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutDestination
+import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutViewEvent
+import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutViewModel
+import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutViewModelFactory
+import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutScreen
 import com.majotyler.hiittimer.presentation.addWorkoutScreen.CreateWorkoutScreen
-import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutDestination
+import com.majotyler.hiittimer.presentation.addWorkoutScreen.CreateWorkoutDestination
 import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutViewModelFactory
-import com.majotyler.hiittimer.presentation.buildWorkouts.BuildWorkoutsScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
@@ -61,16 +61,16 @@ private fun HiitNavDisplay(
             this.serializersModule = SerializersModule {
                 polymorphic(NavKey::class) {
                     subclass(
-                        subclass = Route.AddWorkout::class,
-                        serializer = Route.AddWorkout.serializer(),
+                        subclass = Route.CreateWorkout::class,
+                        serializer = Route.CreateWorkout.serializer(),
                     )
                     subclass(
                         subclass = Route.Home::class,
                         serializer = Route.Home.serializer(),
                     )
                     subclass(
-                        subclass = Route.BuildWorkouts::class,
-                        serializer = Route.BuildWorkouts.serializer(),
+                        subclass = Route.ChooseWorkout::class,
+                        serializer = Route.ChooseWorkout.serializer(),
                     )
                 }
             }
@@ -81,15 +81,15 @@ private fun HiitNavDisplay(
     NavDisplay(
         backStack = backStack,
         entryProvider = entryProvider {
-            entry<Route.AddWorkout> { navEntry ->
+            entry<Route.CreateWorkout> { navEntry ->
                 val viewModelFactory = AddWorkoutViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            is AddWorkoutDestination.AddWorkout -> {
+                            is CreateWorkoutDestination.CreatedWorkout -> {
                                 resultBus.sendResult<Workout>(result = destination.workout)
                                 backStack.removeLast()
                             }
-                            AddWorkoutDestination.NavigateUp -> backStack.removeLast()
+                            CreateWorkoutDestination.NavigateUp -> backStack.removeLast()
                         }
                     }
                 )
@@ -106,8 +106,8 @@ private fun HiitNavDisplay(
                 val viewModelFactory = HomeViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            HomeDestination.NavigateToBuildWorkouts -> {
-                                backStack.add(element = Route.BuildWorkouts)
+                            HomeDestination.NavigateToChooseWorkout -> {
+                                backStack.add(element = Route.ChooseWorkout)
                             }
                         }
                     },
@@ -120,33 +120,34 @@ private fun HiitNavDisplay(
                     viewModel = viewModel(factory = viewModelFactory),
                 )
             }
-            entry<Route.BuildWorkouts> {
-                val viewModelFactory = BuildWorkoutsViewModelFactory(
+
+            entry<Route.ChooseWorkout> {
+                val viewModelFactory = ChooseWorkoutViewModelFactory(
                     router = { destination ->
                         when (destination) {
-                            is BuildWorkoutsDestination.NavigateToAddWorkout ->
-                                backStack.add(element = Route.AddWorkout)
+                            is ChooseWorkoutDestination.NavigateToCreateWorkout ->
+                                backStack.add(element = Route.CreateWorkout)
 
-                            is BuildWorkoutsDestination.NavigateToPlayWorkout -> {
+                            is ChooseWorkoutDestination.NavigateToPlayWorkout -> {
                                 backStack.add(
-                                    element = Route.PlayWorkout(workouts = destination.workouts),
+                                    element = Route.PlayWorkout(workout = destination.workout),
                                 )
                             }
                         }
                     }
                 )
 
-                val viewModel: BuildWorkoutsViewModel = viewModel<BuildWorkoutsViewModel>(
+                val viewModel: ChooseWorkoutViewModel = viewModel<ChooseWorkoutViewModel>(
                     factory = viewModelFactory,
                 )
 
                 ResultEffect<Workout>(resultBus) { workout ->
                     viewModel.onEvent(
-                        event = BuildWorkoutsViewEvent.AddedWorkout(workout = workout)
+                        event = ChooseWorkoutViewEvent.CreatedWorkout(workout = workout)
                     )
                 }
 
-                BuildWorkoutsScreen(
+                ChooseWorkoutScreen(
                     viewModel = viewModel(factory = viewModelFactory),
                 )
             }
@@ -158,7 +159,7 @@ private fun HiitNavDisplay(
                             PlayWorkoutDestination.NavigateUp -> backStack.removeLast()
                         }
                     },
-                    workouts = route.workouts,
+                    workout = route.workout,
                 )
 
                 PlayWorkoutScreen(

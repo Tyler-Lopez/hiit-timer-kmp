@@ -7,7 +7,7 @@ import com.majotyler.hiittimer.presentation.common.navigation.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AddWorkoutViewModel(private val router: Router<AddWorkoutDestination>) : ViewModel() {
+class AddWorkoutViewModel(private val router: Router<CreateWorkoutDestination>) : ViewModel() {
     private val _nameInterval = MutableStateFlow(value = "")
     val nameInterval = _nameInterval.asStateFlow()
 
@@ -96,7 +96,7 @@ class AddWorkoutViewModel(private val router: Router<AddWorkoutDestination>) : V
 
         if (wasOnLastPage) {
             router.routeTo(
-                destination = AddWorkoutDestination.AddWorkout(
+                destination = CreateWorkoutDestination.CreatedWorkout(
                     workout = Workout(
                         intervals = intervals.value,
                         name = nameWorkout.value,
@@ -124,7 +124,7 @@ class AddWorkoutViewModel(private val router: Router<AddWorkoutDestination>) : V
         val wasOnFirstPage = nextPageOrdinal < 0
 
         if (wasOnFirstPage) {
-            router.routeTo(destination = AddWorkoutDestination.NavigateUp)
+            router.routeTo(destination = CreateWorkoutDestination.NavigateUp)
         } else {
             _page.value = AddWorkoutPage.entries[nextPageOrdinal]
         }

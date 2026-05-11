@@ -17,11 +17,11 @@
     <string name="add_workout_toolbar_title">Agregar entrenamiento</string>
     <!--endregion Add Workout -->
 
-    <!--region Build Workouts -->
-    <string name="build_workouts_button_label_add_workout">Agregar entrenamiento</string>
-    <string name="build_workouts_button_label_go">Siguiente</string>
-    <string name="build_workouts_card_header_workouts">Entrenamientos</string>
-    <!--endregion Build Workouts -->
+    <!--region Choose Workout -->
+    <string name="choose_workout_button_label_create_workout">Crear entrenamiento</string>
+    <string name="choose_workout_button_label_go">Siguiente</string>
+    <string name="choose_workout_card_header_workout">Entrenamiento</string>
+    <!--endregion Choose Workout -->
 
     <!--region Confirmation Dialog -->
     <string name="confirmation_dialog_button_label_cancel">Cancelar</string>
@@ -29,7 +29,7 @@
     <!--endregion Confirmation Dialog -->
 
     <!--region Home -->
-    <string name="home_button_label_launch_build_workouts">[Launch BuildWorkoutsScreen]</string>
+    <string name="home_button_label_launch_choose_workout">Elegir entrenamiento</string>
     <!--endregion Home -->
 
     <!--region Play Workout -->

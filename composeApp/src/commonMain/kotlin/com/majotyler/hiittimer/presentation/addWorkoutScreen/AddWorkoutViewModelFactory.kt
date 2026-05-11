@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
 
 class AddWorkoutViewModelFactory(
-    private val router: (AddWorkoutDestination) -> Unit,
+    private val router: (CreateWorkoutDestination) -> Unit,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
         return AddWorkoutViewModel(
