@@ -23,7 +23,7 @@ import com.majotyler.hiittimer.platform.UrlOpener
 import hiittimer.composeapp.generated.resources.Res
 import hiittimer.composeapp.generated.resources.btn_strava_connect_with_orange
 import hiittimer.composeapp.generated.resources.content_description_connect_with_strava
-import hiittimer.composeapp.generated.resources.home_button_label_launch_build_workouts
+import hiittimer.composeapp.generated.resources.home_button_label_launch_choose_workout
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -49,10 +49,10 @@ fun HomeScreen(
     ) {
         Button(
             onClick = {
-                viewModel.onEvent(event = HomeViewEvent.ClickedLaunchBuildWorkouts)
+                viewModel.onEvent(event = HomeViewEvent.ClickedLaunchChooseWorkout)
             },
         ) {
-            Text(text = stringResource(resource = Res.string.home_button_label_launch_build_workouts))
+            Text(text = stringResource(resource = Res.string.home_button_label_launch_choose_workout))
         }
         Image(
             painter = painterResource(Res.drawable.btn_strava_connect_with_orange),

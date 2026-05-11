@@ -1,27 +1,27 @@
 <resources>
-    <!--region Add Workout -->
-    <string name="add_workout_add_interval_title">Add Interval</string>
-    <string name="add_workout_add_interval_interval_name_label">Interval Name</string>
-    <string name="add_workout_add_interval_duration_label">Duration</string>
-    <string name="add_workout_add_interval_rest_label">Rest</string>
-    <string name="add_workout_add_interval_button_label_add_interval">Add Interval to Workout</string>
-    <string name="add_workout_add_interval_button_label_advance">Next</string>
-    <string name="add_workout_add_interval_workout_preview_title">Intervals in Workout</string>
-    <string name="add_workout_create_reps_button_label_advance">Create and Add Workout</string>
-    <string name="add_workout_create_reps_content_description_decrease_repetitions">Decrease repetitions</string>
-    <string name="add_workout_create_reps_content_description_increase_repetitions">Increase repetitions</string>
-    <string name="add_workout_create_reps_title">Choose Number of Repetitions</string>
-    <string name="add_workout_name_workout_button_label_advance">Next</string>
-    <string name="add_workout_name_workout_title">Name Workout</string>
-    <string name="add_workout_name_workout_label">Workout Name</string>
-    <string name="add_workout_toolbar_title">Add Workout</string>
-    <!--endregion Add Workout -->
+    <!--region Create Workout -->
+    <string name="create_workout_add_interval_title">Add Interval</string>
+    <string name="create_workout_add_interval_interval_name_label">Interval Name</string>
+    <string name="create_workout_add_interval_duration_label">Duration</string>
+    <string name="create_workout_add_interval_rest_label">Rest</string>
+    <string name="create_workout_add_interval_button_label_add_interval">Add Interval to Workout</string>
+    <string name="create_workout_add_interval_button_label_advance">Next</string>
+    <string name="create_workout_add_interval_workout_preview_title">Intervals in Workout</string>
+    <string name="create_workout_create_reps_button_label_advance">Create Workout</string>
+    <string name="create_workout_create_reps_content_description_decrease_repetitions">Decrease repetitions</string>
+    <string name="create_workout_create_reps_content_description_increase_repetitions">Increase repetitions</string>
+    <string name="create_workout_create_reps_title">Choose Number of Repetitions</string>
+    <string name="create_workout_name_workout_button_label_advance">Next</string>
+    <string name="create_workout_name_workout_title">Name Workout</string>
+    <string name="create_workout_name_workout_label">Workout Name</string>
+    <string name="create_workout_toolbar_title">Create Workout</string>
+    <!--endregion Create Workout -->
 
-    <!--region Build Workouts -->
-    <string name="build_workouts_button_label_add_workout">Add Workout</string>
-    <string name="build_workouts_button_label_go">Go</string>
-    <string name="build_workouts_card_header_workouts">Workouts</string>
-    <!--endregion Build Workouts -->
+    <!--region Choose Workout -->
+    <string name="choose_workout_button_label_create_workout">Create Workout</string>
+    <string name="choose_workout_button_label_go">Go</string>
+    <string name="choose_workout_card_header_workout">Choose Workout</string>
+    <!--endregion Choose Workout -->
 
     <!--region Confirmation Dialog -->
     <string name="confirmation_dialog_button_label_cancel">Cancel</string>
@@ -29,7 +29,7 @@
     <!--endregion Confirmation Dialog -->
 
     <!--region Home -->
-    <string name="home_button_label_launch_build_workouts">Launch BuildWorkoutsScreen</string>
+    <string name="home_button_label_launch_choose_workout">Choose Workout</string>
     <!--endregion Home -->
 
     <!--region Play Workout -->

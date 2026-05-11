@@ -5,5 +5,5 @@ sealed interface HomeViewEvent {
 
     // TODO This is temporary just to demonstrate
     data object ClickedCreateStravaActivity : HomeViewEvent
-    data object ClickedLaunchBuildWorkouts : HomeViewEvent
+    data object ClickedLaunchChooseWorkout : HomeViewEvent
 }

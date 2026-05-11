@@ -13,16 +13,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface Route : NavKey {
     @Serializable
-    data object AddWorkout : Route
+    data object CreateWorkout : Route
 
     @Serializable
-    data object BuildWorkouts : Route
+    data object ChooseWorkout : Route
 
     @Serializable
     data object Home : Route
 
     @Serializable
     data class PlayWorkout(
-        val workouts: List<Workout>,
+        val workout: Workout,
     ) : Route
 }
