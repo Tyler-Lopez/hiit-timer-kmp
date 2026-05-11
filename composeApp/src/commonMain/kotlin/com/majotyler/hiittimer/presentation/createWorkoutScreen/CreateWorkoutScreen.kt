@@ -1,4 +1,4 @@
-package com.majotyler.hiittimer.presentation.addWorkoutScreen
+package com.majotyler.hiittimer.presentation.createWorkoutScreen
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -35,7 +36,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,21 +45,21 @@ import com.majotyler.hiittimer.presentation.common.TableCard
 import com.majotyler.hiittimer.presentation.common.expect.BackHandler
 import com.majotyler.hiittimer.presentation.common.ui.HiitAppTheme
 import hiittimer.composeapp.generated.resources.Res
-import hiittimer.composeapp.generated.resources.add_workout_add_interval_button_label_add_interval
-import hiittimer.composeapp.generated.resources.add_workout_add_interval_button_label_advance
-import hiittimer.composeapp.generated.resources.add_workout_add_interval_duration_label
-import hiittimer.composeapp.generated.resources.add_workout_add_interval_interval_name_label
-import hiittimer.composeapp.generated.resources.add_workout_add_interval_rest_label
-import hiittimer.composeapp.generated.resources.add_workout_add_interval_title
-import hiittimer.composeapp.generated.resources.add_workout_add_interval_workout_preview_title
-import hiittimer.composeapp.generated.resources.add_workout_create_reps_button_label_advance
-import hiittimer.composeapp.generated.resources.add_workout_create_reps_content_description_decrease_repetitions
-import hiittimer.composeapp.generated.resources.add_workout_create_reps_content_description_increase_repetitions
-import hiittimer.composeapp.generated.resources.add_workout_create_reps_title
-import hiittimer.composeapp.generated.resources.add_workout_name_workout_button_label_advance
-import hiittimer.composeapp.generated.resources.add_workout_name_workout_label
-import hiittimer.composeapp.generated.resources.add_workout_name_workout_title
-import hiittimer.composeapp.generated.resources.add_workout_toolbar_title
+import hiittimer.composeapp.generated.resources.create_workout_add_interval_button_label_add_interval
+import hiittimer.composeapp.generated.resources.create_workout_add_interval_button_label_advance
+import hiittimer.composeapp.generated.resources.create_workout_add_interval_duration_label
+import hiittimer.composeapp.generated.resources.create_workout_add_interval_interval_name_label
+import hiittimer.composeapp.generated.resources.create_workout_add_interval_rest_label
+import hiittimer.composeapp.generated.resources.create_workout_add_interval_title
+import hiittimer.composeapp.generated.resources.create_workout_add_interval_workout_preview_title
+import hiittimer.composeapp.generated.resources.create_workout_create_reps_button_label_advance
+import hiittimer.composeapp.generated.resources.create_workout_create_reps_content_description_decrease_repetitions
+import hiittimer.composeapp.generated.resources.create_workout_create_reps_content_description_increase_repetitions
+import hiittimer.composeapp.generated.resources.create_workout_create_reps_title
+import hiittimer.composeapp.generated.resources.create_workout_name_workout_button_label_advance
+import hiittimer.composeapp.generated.resources.create_workout_name_workout_label
+import hiittimer.composeapp.generated.resources.create_workout_name_workout_title
+import hiittimer.composeapp.generated.resources.create_workout_toolbar_title
 import hiittimer.composeapp.generated.resources.content_description_navigate_up
 import hiittimer.composeapp.generated.resources.interval_duration_label
 import hiittimer.composeapp.generated.resources.interval_rest_label
@@ -74,7 +74,7 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateWorkoutScreen(
-    viewModel: AddWorkoutViewModel,
+    viewModel: CreateWorkoutViewModel,
 ) {
     val enabledAddExercise = viewModel.enabledAddInterval.collectAsStateWithLifecycle()
     val enabledAdvance = viewModel.enabledAdvance.collectAsStateWithLifecycle()
@@ -105,34 +105,34 @@ fun CreateWorkoutScreen(
         secondsDuration = secondsDuration.value,
         secondsRest = secondsRest.value,
         onIntervalNameChanged = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedIntervalName(name = it))
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ChangedIntervalName(name = it))
         },
         onWorkoutNameChanged = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedWorkoutName(name = it))
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ChangedWorkoutName(name = it))
         },
         onIntervalDurationChanged = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedIntervalDuration(seconds = it))
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ChangedIntervalDuration(seconds = it))
         },
         onIntervalRestChanged = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ChangedIntervalRest(seconds = it))
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ChangedIntervalRest(seconds = it))
         },
         onRepetitionsDecreased = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.WorkoutRepetitionsDecreased)
+            viewModel.onEvent(event = CreateWorkoutViewEvent.WorkoutRepetitionsDecreased)
         },
         onRepetitionsIncreased = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.WorkoutRepetitionsIncreased)
+            viewModel.onEvent(event = CreateWorkoutViewEvent.WorkoutRepetitionsIncreased)
         },
         onClickedAddInterval = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedAddIntervalToWorkout)
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ClickedAddIntervalToWorkout)
         },
         onClickedBottomBarButton = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedAdvance)
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ClickedAdvance)
         },
         onClickedNavigateUp = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedNavigateUp)
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ClickedNavigateUp)
         },
         onClickedRemoveInterval = {
-            viewModel.onEvent(event = AddWorkoutViewEvent.ClickedDeleteInterval(index = it))
+            viewModel.onEvent(event = CreateWorkoutViewEvent.ClickedDeleteInterval(index = it))
         }
     )
 }
@@ -147,7 +147,7 @@ private fun CreateWorkoutScreenContent(
     nameInterval: String,
     nameWorkout: String,
     workoutRepetitions: Int,
-    page: AddWorkoutPage,
+    page: CreateWorkoutPage,
     secondsDuration: Int,
     secondsRest: Int,
     onClickedAddInterval: () -> Unit,
@@ -168,12 +168,10 @@ private fun CreateWorkoutScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(resource = Res.string.add_workout_toolbar_title))
+                    Text(text = stringResource(resource = Res.string.create_workout_toolbar_title))
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onClickedNavigateUp,
-                    ) {
+                    IconButton(onClick = onClickedNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(
@@ -185,40 +183,29 @@ private fun CreateWorkoutScreenContent(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                content = {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth(),
+            BottomAppBar {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Button(
+                        enabled = bottomBarButtonIsEnabled,
+                        onClick = onClickedBottomBarButton,
                     ) {
-                        Button(
-                            enabled = bottomBarButtonIsEnabled,
-                            onClick = onClickedBottomBarButton,
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    resource = when (page) {
-                                        AddWorkoutPage.ADD_INTERVAL -> Res
-                                            .string
-                                            .add_workout_add_interval_button_label_advance
-
-                                        AddWorkoutPage.NAME_WORKOUT -> Res
-                                            .string
-                                            .add_workout_name_workout_button_label_advance
-
-                                        AddWorkoutPage.SELECT_REPS -> Res
-                                            .string
-                                            .add_workout_create_reps_button_label_advance
-                                    }
-                                ),
-                            )
-                        }
+                        Text(
+                            text = stringResource(
+                                resource = when (page) {
+                                    CreateWorkoutPage.ADD_INTERVAL -> Res.string.create_workout_add_interval_button_label_advance
+                                    CreateWorkoutPage.NAME_WORKOUT -> Res.string.create_workout_name_workout_button_label_advance
+                                    CreateWorkoutPage.SELECT_REPS -> Res.string.create_workout_create_reps_button_label_advance
+                                }
+                            ),
+                        )
                     }
-                },
-            )
+                }
+            }
         }
     ) { innerPadding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -228,7 +215,7 @@ private fun CreateWorkoutScreenContent(
 
             val pagerState = rememberPagerState(
                 initialPage = page.ordinal,
-                pageCount = { AddWorkoutPage.entries.size },
+                pageCount = { CreateWorkoutPage.entries.size },
             )
 
             LaunchedEffect(page) {
@@ -242,8 +229,7 @@ private fun CreateWorkoutScreenContent(
                 userScrollEnabled = false,
                 state = pagerState,
             ) { pageOrdinal ->
-
-                val page = AddWorkoutPage.entries.get(index = pageOrdinal)
+                val page = CreateWorkoutPage.entries[pageOrdinal]
 
                 Column(
                     modifier = Modifier
@@ -252,7 +238,7 @@ private fun CreateWorkoutScreenContent(
                     verticalArrangement = Arrangement.spacedBy(space = 8.dp),
                 ) {
                     when (page) {
-                        AddWorkoutPage.ADD_INTERVAL -> CreateWorkoutPageAddIntervals(
+                        CreateWorkoutPage.ADD_INTERVAL -> CreateWorkoutPageAddIntervals(
                             addIntervalButtonIsEnabled = addIntervalButtonIsEnabled,
                             intervals = intervals,
                             nameInterval = nameInterval,
@@ -265,12 +251,12 @@ private fun CreateWorkoutScreenContent(
                             onIntervalNameChanged = onIntervalNameChanged,
                         )
 
-                        AddWorkoutPage.NAME_WORKOUT -> CreateWorkoutPageNameWorkout(
+                        CreateWorkoutPage.NAME_WORKOUT -> CreateWorkoutPageNameWorkout(
                             nameWorkout = nameWorkout,
                             onWorkoutNameChanged = onWorkoutNameChanged,
                         )
 
-                        AddWorkoutPage.SELECT_REPS -> CreateWorkoutPageRepetitions(
+                        CreateWorkoutPage.SELECT_REPS -> CreateWorkoutPageRepetitions(
                             enabledWorkoutDecreaseRepetitions = enabledWorkoutDecreaseRepetitions,
                             numberOfReps = workoutRepetitions,
                             onRepetitionsDecreased = onRepetitionsDecreased,
@@ -283,7 +269,6 @@ private fun CreateWorkoutScreenContent(
     }
 }
 
-//region Pages
 @Composable
 private fun ColumnScope.CreateWorkoutPageAddIntervals(
     addIntervalButtonIsEnabled: Boolean,
@@ -298,7 +283,7 @@ private fun ColumnScope.CreateWorkoutPageAddIntervals(
     onIntervalNameChanged: (String) -> Unit,
 ) {
     Text(
-        text = stringResource(resource = Res.string.add_workout_add_interval_title),
+        text = stringResource(resource = Res.string.create_workout_add_interval_title),
         style = MaterialTheme.typography.titleLarge,
     )
 
@@ -308,58 +293,36 @@ private fun ColumnScope.CreateWorkoutPageAddIntervals(
         onValueChange = onIntervalNameChanged,
         modifier = Modifier.fillMaxWidth(),
         label = {
-            Text(
-                text = stringResource(
-                    resource = Res.string.add_workout_add_interval_interval_name_label,
-                ),
-            )
+            Text(text = stringResource(resource = Res.string.create_workout_add_interval_interval_name_label))
         },
     )
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
-    ) {
+    Row(horizontalArrangement = Arrangement.spacedBy(space = 8.dp)) {
         TextField(
             maxLines = 1,
             label = {
-                Text(
-                    text = stringResource(
-                        resource = Res.string.add_workout_add_interval_duration_label,
-                    ),
-                )
+                Text(text = stringResource(resource = Res.string.create_workout_add_interval_duration_label))
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             value = secondsDuration.toString(),
             onValueChange = { onIntervalDurationChanged(it) },
             modifier = Modifier.weight(weight = 1F),
             suffix = {
-                Text(
-                    text = stringResource(
-                        resource = Res.string.seconds_short_label,
-                    ),
-                )
+                Text(text = stringResource(resource = Res.string.seconds_short_label))
             },
         )
 
         TextField(
             maxLines = 1,
             label = {
-                Text(
-                    text = stringResource(
-                        resource = Res.string.add_workout_add_interval_rest_label,
-                    ),
-                )
+                Text(text = stringResource(resource = Res.string.create_workout_add_interval_rest_label))
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             value = secondsRest.toString(),
             onValueChange = { onIntervalRestChanged(it) },
             modifier = Modifier.weight(weight = 1F),
             suffix = {
-                Text(
-                    text = stringResource(
-                        resource = Res.string.seconds_short_label,
-                    ),
-                )
+                Text(text = stringResource(resource = Res.string.seconds_short_label))
             },
         )
     }
@@ -369,17 +332,11 @@ private fun ColumnScope.CreateWorkoutPageAddIntervals(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClickedAddInterval,
     ) {
-        Text(
-            text = stringResource(
-                resource = Res.string.add_workout_add_interval_button_label_add_interval,
-            ),
-        )
+        Text(text = stringResource(resource = Res.string.create_workout_add_interval_button_label_add_interval))
     }
 
     TableCard(
-        header = stringResource(
-            resource = Res.string.add_workout_add_interval_workout_preview_title,
-        ),
+        header = stringResource(resource = Res.string.create_workout_add_interval_workout_preview_title),
         modifier = Modifier
             .fillMaxWidth()
             .weight(weight = 1F),
@@ -391,30 +348,20 @@ private fun ColumnScope.CreateWorkoutPageAddIntervals(
                         quantity = interval.duration,
                         formatArgs = arrayOf(interval.duration),
                     )
-
                     val restSeconds = pluralStringResource(
                         resource = Res.plurals.seconds_long,
                         quantity = interval.rest,
                         formatArgs = arrayOf(interval.rest),
                     )
-
                     RowClickable(
                         entryNo = index + 1,
                         text = interval.name,
-                        onClickedRemove = {
-                            onClickedRemoveInterval(index)
-                        },
+                        onClickedRemove = { onClickedRemoveInterval(index) },
                         onClickedRow = null,
                         showDivider = index != intervals.lastIndex,
                         lines = listOf(
-                            stringResource(
-                                resource = Res.string.interval_duration_label,
-                                formatArgs = arrayOf(durationSeconds),
-                            ),
-                            stringResource(
-                                resource = Res.string.interval_rest_label,
-                                formatArgs = arrayOf(restSeconds),
-                            ),
+                            stringResource(resource = Res.string.interval_duration_label, formatArgs = arrayOf(durationSeconds)),
+                            stringResource(resource = Res.string.interval_rest_label, formatArgs = arrayOf(restSeconds)),
                         )
                     )
                 }
@@ -429,9 +376,7 @@ private fun ColumnScope.CreateWorkoutPageNameWorkout(
     onWorkoutNameChanged: (String) -> Unit,
 ) {
     Text(
-        text = stringResource(
-            resource = Res.string.add_workout_name_workout_title,
-        ),
+        text = stringResource(resource = Res.string.create_workout_name_workout_title),
         style = MaterialTheme.typography.titleLarge,
     )
 
@@ -441,11 +386,7 @@ private fun ColumnScope.CreateWorkoutPageNameWorkout(
         onValueChange = onWorkoutNameChanged,
         modifier = Modifier.fillMaxWidth(),
         label = {
-            Text(
-                text = stringResource(
-                    resource = Res.string.add_workout_name_workout_label,
-                ),
-            )
+            Text(text = stringResource(resource = Res.string.create_workout_name_workout_label))
         },
     )
 }
@@ -458,59 +399,40 @@ private fun ColumnScope.CreateWorkoutPageRepetitions(
     onRepetitionsIncreased: () -> Unit,
 ) {
     Text(
-        text = stringResource(
-            resource = Res.string.add_workout_create_reps_title,
-        ),
+        text = stringResource(resource = Res.string.create_workout_create_reps_title),
         style = MaterialTheme.typography.titleLarge,
     )
 
     Row(
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
             onClick = onRepetitionsDecreased,
-            content = {
-                Icon(
-                    contentDescription = stringResource(
-                        resource = Res
-                            .string
-                            .add_workout_create_reps_content_description_decrease_repetitions,
-                    ),
-                    imageVector = Icons.Default.Remove,
-                )
-            },
             enabled = enabledWorkoutDecreaseRepetitions,
-        )
+        ) {
+            Icon(
+                contentDescription = stringResource(resource = Res.string.create_workout_create_reps_content_description_decrease_repetitions),
+                imageVector = Icons.Default.Remove,
+            )
+        }
 
-        Text(
-            text = numberOfReps.toString(),
-        )
+        Text(text = numberOfReps.toString())
 
-        IconButton(
-            onClick = onRepetitionsIncreased,
-            content = {
-                Icon(
-                    contentDescription = stringResource(
-                        resource = Res
-                            .string
-                            .add_workout_create_reps_content_description_increase_repetitions,
-                    ),
-                    imageVector = Icons.Default.Add,
-                )
-            }
-        )
+        IconButton(onClick = onRepetitionsIncreased) {
+            Icon(
+                contentDescription = stringResource(resource = Res.string.create_workout_create_reps_content_description_increase_repetitions),
+                imageVector = Icons.Default.Add,
+            )
+        }
     }
 }
-//endregion Pages
 
-//region Previews
 @Preview
 @Composable
 private fun CreateWorkoutScreenContent_Preview(
-    @PreviewParameter(AddWorkoutPagePreviewParameterProvider::class) page: AddWorkoutPage,
+    @PreviewParameter(CreateWorkoutPagePreviewParameterProvider::class) page: CreateWorkoutPage,
 ) {
     HiitAppTheme {
         CreateWorkoutScreenContent(
@@ -538,7 +460,6 @@ private fun CreateWorkoutScreenContent_Preview(
     }
 }
 
-class AddWorkoutPagePreviewParameterProvider : PreviewParameterProvider<AddWorkoutPage> {
-    override val values: Sequence<AddWorkoutPage> = AddWorkoutPage.entries.toList().asSequence()
+class CreateWorkoutPagePreviewParameterProvider : PreviewParameterProvider<CreateWorkoutPage> {
+    override val values: Sequence<CreateWorkoutPage> = CreateWorkoutPage.entries.toList().asSequence()
 }
-//endregion Previews

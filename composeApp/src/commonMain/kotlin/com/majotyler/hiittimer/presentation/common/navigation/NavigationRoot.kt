@@ -17,9 +17,9 @@ import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutViewEvent
 import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutViewModel
 import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutViewModelFactory
 import com.majotyler.hiittimer.presentation.chooseWorkout.ChooseWorkoutScreen
-import com.majotyler.hiittimer.presentation.addWorkoutScreen.CreateWorkoutScreen
-import com.majotyler.hiittimer.presentation.addWorkoutScreen.CreateWorkoutDestination
-import com.majotyler.hiittimer.presentation.addWorkoutScreen.AddWorkoutViewModelFactory
+import com.majotyler.hiittimer.presentation.createWorkoutScreen.CreateWorkoutScreen
+import com.majotyler.hiittimer.presentation.createWorkoutScreen.CreateWorkoutDestination
+import com.majotyler.hiittimer.presentation.createWorkoutScreen.CreateWorkoutViewModelFactory
 import com.majotyler.hiittimer.presentation.homeScreen.HomeDestination
 import com.majotyler.hiittimer.presentation.homeScreen.HomeScreen
 import com.majotyler.hiittimer.presentation.homeScreen.HomeViewModelFactory
@@ -82,7 +82,7 @@ private fun HiitNavDisplay(
         backStack = backStack,
         entryProvider = entryProvider {
             entry<Route.CreateWorkout> { navEntry ->
-                val viewModelFactory = AddWorkoutViewModelFactory(
+                val viewModelFactory = CreateWorkoutViewModelFactory(
                     router = { destination ->
                         when (destination) {
                             is CreateWorkoutDestination.CreatedWorkout -> {

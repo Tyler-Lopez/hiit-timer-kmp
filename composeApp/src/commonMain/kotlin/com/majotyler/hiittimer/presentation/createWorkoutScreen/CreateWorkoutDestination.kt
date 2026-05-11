@@ -1,4 +1,4 @@
-package com.majotyler.hiittimer.presentation.addWorkoutScreen
+package com.majotyler.hiittimer.presentation.createWorkoutScreen
 
 import com.majotyler.hiittimer.domain.model.Workout
 
